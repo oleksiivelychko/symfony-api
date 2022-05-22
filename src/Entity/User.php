@@ -36,7 +36,7 @@ class User implements \JsonSerializable
     #[ORM\JoinTable(name: 'users_groups')]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(name: 'group_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    public Collection $groups;
+    private Collection $groups;
 
     public function __construct()
     {

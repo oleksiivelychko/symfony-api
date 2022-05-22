@@ -23,7 +23,7 @@ class Group
     #[Assert\NotBlank(message: "The name '{{ value }}' is empty.")]
     public string $name;
 
-    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'groups')]
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'groups')]
     public Collection $users;
 
     public function __construct()
