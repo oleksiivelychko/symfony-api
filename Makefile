@@ -32,13 +32,17 @@ docker-compose-up:
 make-entity:
 	php bin/console make:entity
 
-# make-migration table_name=users
+# make make-migration table_name=users
 make-migration:
 	docker exec symfony-api php bin/console doctrine:migration:diff --filter-expression=/${table_name}/
 
 make-migrations:
 	docker exec symfony-api php bin/console make:migration
 	docker cp symfony-api:/app/migrations/. migrations
+
+# make migration-op migration=Version20220522093420 op=[up|down]
+migration-op:
+	docker exec symfony-api php bin/console doctrine:migrations:execute 'DoctrineMigrations\${migration}' --${op} --no-interaction -vvv
 
 run-migrations:
 	docker exec symfony-api php bin/console doctrine:migrations:migrate --no-interaction
