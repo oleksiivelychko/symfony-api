@@ -7,10 +7,18 @@ ADD https://raw.githubusercontent.com/oleksiivelychko/laravel-dashboard/main/.do
 
 RUN echo 'deb [trusted=yes] https://repo.symfony.com/apt/ /' | tee /etc/apt/sources.list.d/symfony-cli.list
 
-RUN apt-get update -y && apt-get install -y libonig-dev libmcrypt-dev git symfony-cli
+RUN apt-get update && apt-get install -y \
+    libonig-dev \
+    libmcrypt-dev \
+    libpq-dev \
+    git \
+    symfony-cli
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-RUN docker-php-ext-install pdo pdo_mysql mbstring
+RUN docker-php-ext-install \
+    pdo \
+    pdo_pgsql \
+    mbstring
 
 RUN pecl install xdebug-3.1.4
 RUN docker-php-ext-enable xdebug

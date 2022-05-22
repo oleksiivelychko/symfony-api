@@ -1,8 +1,8 @@
-version: '3'
+version: '3.9'
 
 services:
 ###> doctrine/doctrine-bundle ###
-  database:
+  symfony-db:
     ports:
-      - "5432"
+      - ${POSTGRES_PORT:-5432}:5432
 ###< doctrine/doctrine-bundle ###

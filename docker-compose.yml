@@ -1,21 +1,29 @@
-version: '3'
+version: '3.9'
 
 services:
 ###> doctrine/doctrine-bundle ###
-  database:
+  symfony-db:
+    container_name: symfony_db
     image: postgres:${POSTGRES_VERSION:-13}-alpine
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-app}
+      POSTGRES_DB: ${POSTGRES_DB:-symfony-api}
       # You should definitely change the password in production
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ChangeMe}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secret}
       POSTGRES_USER: ${POSTGRES_USER:-symfony}
     volumes:
-      - db-data:/var/lib/postgresql/data:rw
+      - symfony-api-data:/var/lib/postgresql/data:rw
       # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
       # - ./docker/db/data:/var/lib/postgresql/data:rw
+    networks:
+      - symfony-bridge-external
 ###< doctrine/doctrine-bundle ###
 
 volumes:
 ###> doctrine/doctrine-bundle ###
-  db-data:
+  symfony-api-data:
 ###< doctrine/doctrine-bundle ###
+
+networks:
+  symfony-bridge-external:
+    external: true
+    name: symfony-bridge
