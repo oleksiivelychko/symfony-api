@@ -1,4 +1,5 @@
 clear-cache:
+	docker exec symfony-api rm -rf /app/var/cache/*
 	docker exec symfony-api php bin/console cache:clear
 
 create-project:
@@ -8,7 +9,7 @@ docker-bash:
 	docker run --rm -it symfony-api/dev /bin/bash
 
 docker-build:
-	docker build . -t symfony-api/dev
+	docker build --no-cache . -t symfony-api/dev
 
 docker-delete:
 	docker image rm symfony-api/dev
@@ -17,7 +18,7 @@ docker-network:
 	docker network create -d bridge symfony-bridge
 
 docker-run:
-	docker run -it -p 8000:8000 --name symfony-api --network=symfony-bridge symfony-api/dev
+	docker run -it -p 8000:8000 --name symfony-api -v `pwd`:/app --network=symfony-bridge symfony-api/dev
 
 docker-restart:
 	docker restart symfony-api

@@ -27,6 +27,7 @@ WORKDIR /app
 COPY . /app
 
 RUN composer install
+# RUN symfony server:ca:install
 
 EXPOSE 8000
 CMD symfony server:start --port=8000
