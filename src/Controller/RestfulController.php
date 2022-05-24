@@ -4,14 +4,15 @@ namespace App\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 class RestfulController extends AbstractController
 {
-    public function response($data, $status=500, $headers=[]): JsonResponse
-    {
-        return new JsonResponse($data, $status, $headers);
-    }
+    protected const USER_NOT_FOUND = 'User not found';
+    protected const USER_HAS_BEEN_CREATED = 'User has been created';
+    protected const USER_HAS_BEEN_UPDATED = 'User has been updated';
+    protected const UNPROCESSABLE_ENTITY = 'Unprocessable entity';
+    protected const EMAIL_IS_NOT_VALID = 'Email is not valid email address';
+    protected const EMAIL_ALREADY_TAKEN = 'Email already taken';
 
     protected function transformJsonBody(Request $request): Request
     {
