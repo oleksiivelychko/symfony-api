@@ -57,4 +57,19 @@ class Group
             'name' => $this->getName()
         ];
     }
+
+    public function getData(): array
+    {
+        return [
+            'id'    => $this->getId(),
+            'name'  => $this->getName(),
+            'users' => array_map(function (User $user) {
+                return [
+                    'id'    => $user->getId(),
+                    'name'  => $user->getName(),
+                    'email' => $user->getEmail(),
+                ];
+            }, $this->getUsers()->toArray())
+        ];
+    }
 }
