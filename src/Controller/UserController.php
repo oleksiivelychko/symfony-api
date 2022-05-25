@@ -23,16 +23,13 @@ final class UserController extends RestfulController
     }
 
     #[Route('users', name: 'fetch-user', methods: ['GET'])]
-    public function fetchUser(UserRepository $userRepository, ?int $id=null): JsonResponse
+    public function fetchUser(UserRepository $userRepository, int $id): JsonResponse
     {
         $user = $userRepository->find($id);
         if (!$user) {
-            $data = [
-                'status' => Response::HTTP_NOT_FOUND,
-                'errors' => self::USER_NOT_FOUND,
-            ];
-            return $this->json($data, Response::HTTP_NOT_FOUND);
+            return $this->json(['error' => self::ENTITY_NOT_FOUND], Response::HTTP_NOT_FOUND);
         }
+
         return $this->json($user);
     }
 
@@ -46,20 +43,12 @@ final class UserController extends RestfulController
             }
 
             if (!filter_var($request->get('email'), FILTER_VALIDATE_EMAIL)) {
-                $data = [
-                    'status' => Response::HTTP_BAD_GATEWAY,
-                    'errors' => self::EMAIL_IS_NOT_VALID,
-                ];
-                return $this->json($data, Response::HTTP_UNPROCESSABLE_ENTITY);
+                return $this->json(['error' => self::EMAIL_IS_NOT_VALID], Response::HTTP_BAD_GATEWAY);
             }
 
             $existsOne = $entityManager->getRepository(User::class)->findOneByEmail($request->get('email'));
             if ($existsOne) {
-                $data = [
-                    'status' => Response::HTTP_BAD_GATEWAY,
-                    'errors' => self::EMAIL_ALREADY_TAKEN,
-                ];
-                return $this->json($data, Response::HTTP_UNPROCESSABLE_ENTITY);
+                return $this->json(['error' => self::EMAIL_ALREADY_TAKEN], Response::HTTP_BAD_GATEWAY);
             }
 
             $user = new User();
@@ -79,20 +68,17 @@ final class UserController extends RestfulController
             $entityManager->flush();
 
             $data = [
-                'status'    => Response::HTTP_CREATED,
-                'success'   => self::USER_HAS_BEEN_CREATED,
+                'message'   => self::ENTITY_HAS_BEEN_CREATED,
                 'id'        => $user->getId(),
                 'name'      => $user->getName(),
                 'email'     => $user->getEmail(),
             ];
-            return $this->json($data);
+
+            return $this->json($data, Response::HTTP_CREATED);
         } catch (\Exception $e) {
-            $data = [
-                'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                'errors' => self::UNPROCESSABLE_ENTITY,
-                'message' => $e->getMessage()
-            ];
-            return $this->json($data, Response::HTTP_UNPROCESSABLE_ENTITY);
+            return $this->json([
+                'error' => $this->unprocessableExceptionMessage($e)
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
 
@@ -108,11 +94,7 @@ final class UserController extends RestfulController
         try {
             $user = $userRepository->find($id);
             if (!$user) {
-                $data = [
-                    'status' => Response::HTTP_NOT_FOUND,
-                    'errors' => self::USER_NOT_FOUND,
-                ];
-                return $this->json($data, Response::HTTP_NOT_FOUND);
+                return $this->json(['error' => self::ENTITY_NOT_FOUND], Response::HTTP_NOT_FOUND);
             }
 
             $request = $this->transformJsonBody($request);
@@ -130,45 +112,33 @@ final class UserController extends RestfulController
 
             $entityManager->flush();
 
-            $data = [
-                'status'    => Response::HTTP_OK,
-                'success'   => self::USER_HAS_BEEN_UPDATED,
+            return $this->json([
+                'message'   => self::ENTITY_HAS_BEEN_UPDATED,
                 'id'        => $user->getId(),
                 'name'      => $user->getName()
-            ];
-            return $this->json($data);
-
+            ]);
         } catch (\Exception $e) {
-            $data = [
-                'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                'errors' => self::UNPROCESSABLE_ENTITY,
-                'message' => $e->getMessage()
-            ];
-            return $this->json($data, Response::HTTP_UNPROCESSABLE_ENTITY);
+            return $this->json([
+                'error' => $this->unprocessableExceptionMessage($e)
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
 
-    #[Route('users', name: 'remove-user', methods: ['DELETE'])]
-    public function removeUser(
+    #[Route('users', name: 'delete-user', methods: ['DELETE'])]
+    public function deleteUser(
         EntityManagerInterface $entityManager,
         UserRepository $userRepository,
-        ?int $id=null
+        int $id
     ): JsonResponse
     {
         $user = $userRepository->find($id);
         if (!$user) {
-            $data = [
-                'status' => Response::HTTP_NOT_FOUND,
-                'errors' => self::USER_NOT_FOUND
-            ];
-            return $this->json($data, Response::HTTP_NOT_FOUND);
+            return $this->json(['error' => Response::HTTP_NOT_FOUND], Response::HTTP_NOT_FOUND);
         }
 
         $entityManager->remove($user);
         $entityManager->flush();
 
-        return $this->json([
-            'status' => Response::HTTP_OK
-        ]);
+        return $this->json(['message' => self::ENTITY_HAS_BEEN_DELETED]);
     }
 }
