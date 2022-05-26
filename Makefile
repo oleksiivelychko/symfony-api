@@ -33,6 +33,9 @@ docker-stop:
 docker-compose-up:
 	docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
 
+heroku-git:
+	heroku git:remote -a oleksiivelychkosymfonyapi
+
 make-entity:
 	php bin/console make:entity
 
@@ -47,6 +50,9 @@ make-migrations:
 # make migration-op migration=Version20220522093420 op=[up|down]
 migration-op:
 	docker exec symfony-api php bin/console doctrine:migrations:execute 'DoctrineMigrations\${migration}' --${op} --no-interaction -vvv
+
+heroku-set-app-secret:
+	heroku config:set APP_SECRET=$(php -r 'echo bin2hex(random_bytes(16));')
 
 run-migrations:
 	docker exec symfony-api php bin/console doctrine:migrations:migrate --no-interaction
