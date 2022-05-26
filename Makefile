@@ -36,6 +36,9 @@ docker-compose-up:
 heroku-git:
 	heroku git:remote -a oleksiivelychkosymfonyapi
 
+git-push:
+	git push heroku main
+
 make-entity:
 	php bin/console make:entity
 
