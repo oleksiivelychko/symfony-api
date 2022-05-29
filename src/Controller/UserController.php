@@ -22,7 +22,7 @@ final class UserController extends RestfulController
         return $this->json($data);
     }
 
-    #[Route('users', name: '_fetch-user', methods: ['GET'])]
+    #[Route('users/{id}', name: '_fetch-user', methods: ['GET'])]
     public function fetchUser(UserRepository $userRepository, int $id): JsonResponse
     {
         $user = $userRepository->find($id);
@@ -82,7 +82,7 @@ final class UserController extends RestfulController
         }
     }
 
-    #[Route('users', name: '_edit-user', methods: ['PUT'])]
+    #[Route('users/{id}', name: '_edit-user', methods: ['PUT'])]
     public function editUser(
         Request $request,
         EntityManagerInterface $entityManager,
@@ -124,7 +124,7 @@ final class UserController extends RestfulController
         }
     }
 
-    #[Route('users', name: '_delete-user', methods: ['DELETE'])]
+    #[Route('users/{id}', name: '_delete-user', methods: ['DELETE'])]
     public function deleteUser(
         EntityManagerInterface $entityManager,
         UserRepository $userRepository,

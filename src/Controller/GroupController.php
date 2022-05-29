@@ -26,7 +26,7 @@ final class GroupController extends RestfulController
         return $this->json($data ?? []);
     }
 
-    #[Route('groups', name: '_fetch-group', methods: ['GET'])]
+    #[Route('groups/{id}', name: '_fetch-group', methods: ['GET'])]
     public function fetchGroup(GroupRepository $groupRepository, int $id): JsonResponse
     {
         $group = $groupRepository->find($id);
@@ -63,7 +63,7 @@ final class GroupController extends RestfulController
         }
     }
 
-    #[Route('groups', name: '_edit-group', methods: ['PUT'])]
+    #[Route('groups/{id}', name: '_edit-group', methods: ['PUT'])]
     public function editGroup(
         Request $request,
         EntityManagerInterface $entityManager,
@@ -96,7 +96,7 @@ final class GroupController extends RestfulController
         }
     }
 
-    #[Route('groups', name: '_delete-group', methods: ['DELETE'])]
+    #[Route('groups/{id}', name: '_delete-group', methods: ['DELETE'])]
     public function deleteGroup(
         EntityManagerInterface $entityManager,
         GroupRepository $groupRepository,
