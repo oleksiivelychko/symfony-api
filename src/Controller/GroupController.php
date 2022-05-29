@@ -10,10 +10,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('api-v2', name: 'group-api')]
+#[Route('api-v2/', name: 'group-api')]
 final class GroupController extends RestfulController
 {
-    #[Route('groups', name: 'fetch-groups', methods: ['GET'])]
+    #[Route('groups', name: '_fetch-groups', methods: ['GET'])]
     public function fetchGroups(GroupRepository $groupRepository): JsonResponse
     {
         /**
@@ -26,7 +26,7 @@ final class GroupController extends RestfulController
         return $this->json($data ?? []);
     }
 
-    #[Route('groups', name: 'fetch-group', methods: ['GET'])]
+    #[Route('groups', name: '_fetch-group', methods: ['GET'])]
     public function fetchGroup(GroupRepository $groupRepository, int $id): JsonResponse
     {
         $group = $groupRepository->find($id);
@@ -37,7 +37,7 @@ final class GroupController extends RestfulController
         return $this->json([$group->getData()]);
     }
 
-    #[Route('groups', name: 'add-group', methods: ['POST'])]
+    #[Route('groups', name: '_add-group', methods: ['POST'])]
     public function addGroup(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         try {
@@ -63,7 +63,7 @@ final class GroupController extends RestfulController
         }
     }
 
-    #[Route('groups', name: 'edit-group', methods: ['PUT'])]
+    #[Route('groups', name: '_edit-group', methods: ['PUT'])]
     public function editGroup(
         Request $request,
         EntityManagerInterface $entityManager,
@@ -96,7 +96,7 @@ final class GroupController extends RestfulController
         }
     }
 
-    #[Route('groups', name: 'delete-group', methods: ['DELETE'])]
+    #[Route('groups', name: '_delete-group', methods: ['DELETE'])]
     public function deleteGroup(
         EntityManagerInterface $entityManager,
         GroupRepository $groupRepository,

@@ -36,6 +36,9 @@ heroku-git:
 git-push:
 	git push heroku main
 
+list-routes:
+	php bin/console debug:router
+
 make-entity:
 	php bin/console make:entity
 

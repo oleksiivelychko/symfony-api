@@ -12,17 +12,17 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('api-v2', name: 'user-api')]
+#[Route('api-v2/', name: 'user-api')]
 final class UserController extends RestfulController
 {
-    #[Route('users', name: 'fetch-users', methods: ['GET'])]
+    #[Route('users', name: '_fetch-users', methods: ['GET'])]
     public function fetchUsers(UserRepository $userRepository): JsonResponse
     {
         $data = $userRepository->findAll();
         return $this->json($data);
     }
 
-    #[Route('users', name: 'fetch-user', methods: ['GET'])]
+    #[Route('users', name: '_fetch-user', methods: ['GET'])]
     public function fetchUser(UserRepository $userRepository, int $id): JsonResponse
     {
         $user = $userRepository->find($id);
@@ -33,7 +33,7 @@ final class UserController extends RestfulController
         return $this->json($user);
     }
 
-    #[Route('users', name: 'add-user', methods: ['POST'])]
+    #[Route('users', name: '_add-user', methods: ['POST'])]
     public function addUser(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         try {
@@ -82,7 +82,7 @@ final class UserController extends RestfulController
         }
     }
 
-    #[Route('users', name: 'edit-user', methods: ['PUT'])]
+    #[Route('users', name: '_edit-user', methods: ['PUT'])]
     public function editUser(
         Request $request,
         EntityManagerInterface $entityManager,
@@ -124,7 +124,7 @@ final class UserController extends RestfulController
         }
     }
 
-    #[Route('users', name: 'delete-user', methods: ['DELETE'])]
+    #[Route('users', name: '_delete-user', methods: ['DELETE'])]
     public function deleteUser(
         EntityManagerInterface $entityManager,
         UserRepository $userRepository,
