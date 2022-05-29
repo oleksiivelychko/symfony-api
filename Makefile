@@ -23,9 +23,6 @@ docker-network:
 docker-run:
 	docker run -it -p 8000:8000 --name symfony-api -v `pwd`:/app --network=symfony-bridge symfony-api/dev
 
-docker-restart:
-	docker restart symfony-api
-
 docker-stop:
 	docker stop symfony-api
 	docker rm symfony-api
