@@ -328,6 +328,12 @@
             "src/Kernel.php"
         ]
     },
+    "symfony/http-client": {
+        "version": "v6.1.0"
+    },
+    "symfony/http-client-contracts": {
+        "version": "v3.1.0"
+    },
     "symfony/http-foundation": {
         "version": "v6.0.8"
     },
