@@ -2,9 +2,6 @@ clear-cache:
 	docker exec symfony-api rm -rf /app/var/cache/*
 	docker exec symfony-api php bin/console cache:clear
 
-composer-update:
-	docker exec symfony-api composer update
-
 create-project:
 	composer create-project symfony/skeleton symfony-api
 
@@ -59,3 +56,6 @@ heroku-set-app-secret:
 
 run-migrations:
 	docker exec symfony-api php bin/console doctrine:migrations:migrate --no-interaction
+
+run-tests:
+	./vendor/bin/phpunit tests

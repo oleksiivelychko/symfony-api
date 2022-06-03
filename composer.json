@@ -1,39 +1,42 @@
 {
+    "name": "oleksiivelychko/symfony-api",
+    "description": "Sample API variations based on enterprise-level framework..",
+    "homepage": "https://github.com/oleksiivelychko/symfony-api",
     "type": "project",
-    "license": "proprietary",
+    "license": "MIT",
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
         "php": ">=8.1",
         "ext-ctype": "*",
         "ext-iconv": "*",
-        "api-platform/core": "^2.6",
-        "doctrine/annotations": "^1.0",
-        "doctrine/doctrine-bundle": "^2.6",
-        "doctrine/doctrine-migrations-bundle": "^3.2",
-        "doctrine/orm": "^2.12",
-        "nelmio/cors-bundle": "^2.2",
-        "phpdocumentor/reflection-docblock": "^5.3",
-        "phpstan/phpdoc-parser": "^1.5",
-        "symfony/asset": "6.0.*",
-        "symfony/console": "6.0.*",
-        "symfony/dotenv": "6.0.*",
-        "symfony/expression-language": "6.0.*",
-        "symfony/flex": "^2",
-        "symfony/framework-bundle": "6.0.*",
-        "symfony/monolog-bundle": "^3.8",
-        "symfony/property-access": "6.0.*",
-        "symfony/property-info": "6.0.*",
-        "symfony/proxy-manager-bridge": "6.0.*",
-        "symfony/runtime": "6.0.*",
-        "symfony/security-bundle": "6.0.*",
-        "symfony/serializer": "6.0.*",
-        "symfony/twig-bundle": "6.0.*",
-        "symfony/validator": "6.0.*",
-        "symfony/yaml": "6.0.*"
+        "api-platform/core": "^2.6.8",
+        "doctrine/annotations": "^1.13.2",
+        "doctrine/doctrine-bundle": "^2.6.3",
+        "doctrine/doctrine-migrations-bundle": "^3.2.2",
+        "doctrine/orm": "^2.12.2",
+        "nelmio/cors-bundle": "^2.2.0",
+        "phpdocumentor/reflection-docblock": "^5.3.0",
+        "phpstan/phpdoc-parser": "^1.5.1",
+        "symfony/asset": "^6.1.0",
+        "symfony/console": "^6.1.0",
+        "symfony/dotenv": "^6.1.0",
+        "symfony/expression-language": "^6.1.0",
+        "symfony/flex": "^2.1.8",
+        "symfony/framework-bundle": "^6.1.0",
+        "symfony/monolog-bundle": "^3.8.0",
+        "symfony/property-access": "^6.1.0",
+        "symfony/property-info": "^6.1.0",
+        "symfony/proxy-manager-bridge": "^6.1.0",
+        "symfony/runtime": "^6.1.0",
+        "symfony/security-bundle": "^6.1.0",
+        "symfony/serializer": "^6.1.0",
+        "symfony/twig-bundle": "^6.1.0",
+        "symfony/validator": "^6.1.0",
+        "symfony/yaml": "^6.1.0"
     },
     "require-dev": {
-        "symfony/maker-bundle": "^1.42"
+        "symfony/maker-bundle": "^1.43"
     },
     "config": {
         "allow-plugins": {
@@ -85,7 +88,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "6.0.*",
+            "require": "6.1.*",
             "docker": false
         }
     }
