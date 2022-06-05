@@ -17,6 +17,12 @@ framework:
     php_errors:
         log: true
 
+    http_client:
+        default_options:
+            headers:
+                'Content-Type': 'application/json'
+                'Accept': 'application/json'
+
 when@test:
     framework:
         test: true
