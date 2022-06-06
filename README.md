@@ -10,6 +10,12 @@ and available at http://127.0.0.1:8000/api as default endpoint.
 
 💡 Before docker build remove `@php bin/console doctrine:migrations:migrate --no-interaction` from _composer.json_
 
+💡 Install PostgreSQL client:
+```
+brew install libpq
+ln -s /opt/homebrew/Cellar/libpq/14.3/bin/psql /usr/local/bin/psql
+```
+
 🔧 TODO:
 
 - [x] Dockerized app.
