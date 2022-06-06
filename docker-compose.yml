@@ -1,6 +1,7 @@
 version: '3.9'
 
 services:
+
   symfony-db:
     container_name: symfony_db
     image: postgres:${POSTGRES_VERSION:-13}-alpine
