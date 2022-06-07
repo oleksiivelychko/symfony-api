@@ -26,9 +26,10 @@ class Group
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'groups')]
     public Collection $users;
 
-    public function __construct()
+    public function __construct(string $name, ...$users)
     {
-        $this->users = new ArrayCollection();
+        $this->name = $name;
+        $this->users = new ArrayCollection($users);
     }
 
     public function getId(): ?int

@@ -38,9 +38,11 @@ class User implements \JsonSerializable
     #[ORM\InverseJoinColumn(name: 'group_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     private Collection $groups;
 
-    public function __construct()
+    public function __construct(string $name, string $email, ...$groups)
     {
-        $this->groups = new ArrayCollection();
+        $this->name = $name;
+        $this->email = $email;
+        $this->groups = new ArrayCollection($groups);
     }
 
     public function __toString(): string
