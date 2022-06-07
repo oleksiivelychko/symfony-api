@@ -2,14 +2,15 @@ version: '3.9'
 
 services:
 
-  symfony-app:
-    container_name: symfony_app
+  symfony-api:
+    container_name: symfony_api
     image: symfony-api/dev
     build:
       context: .
     volumes:
       - .:/app
     restart: unless-stopped
-    tty: true
+    ports:
+      - "8000:8000"
     networks:
       - symfony-bridge-external
