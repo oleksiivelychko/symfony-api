@@ -26,7 +26,7 @@ class ApiPlatformGroupCrudTest extends ApiTestCase
     {
         $response = static::createClient()->request('POST', $this->apiEndpoint, [
             'json' => [
-                'name' => 'group-01'
+                'name' => 'group-01',
             ]
         ]);
 
@@ -35,7 +35,7 @@ class ApiPlatformGroupCrudTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $this->assertJsonContains([
             '@id' => $this->apiEndpoint.'/'.static::$currentGroupId,
-            'name' => 'group-01'
+            'name' => 'group-01',
         ]);
     }
 
@@ -48,11 +48,11 @@ class ApiPlatformGroupCrudTest extends ApiTestCase
      */
     public function testGetGroup(): void
     {
-        static::createClient()->request('GET', '/api/groups/'.static::$currentGroupId);
+        static::createClient()->request('GET', $this->apiEndpoint.'/'.static::$currentGroupId);
 
         $this->assertResponseIsSuccessful();
         $this->assertJsonContains([
-            '@id' => $this->apiEndpoint.'/'.static::$currentGroupId
+            '@id' => $this->apiEndpoint.'/'.static::$currentGroupId,
         ]);
     }
 
@@ -65,16 +65,16 @@ class ApiPlatformGroupCrudTest extends ApiTestCase
      */
     public function testUpdateGroup(): void
     {
-        static::createClient()->request('PUT', '/api/groups/'.static::$currentGroupId, [
+        static::createClient()->request('PUT', $this->apiEndpoint.'/'.static::$currentGroupId, [
             'json' => [
-                'name' => 'group-02'
+                'name' => 'group-02',
             ]
         ]);
 
         $this->assertResponseIsSuccessful();
         $this->assertJsonContains([
             '@id' => $this->apiEndpoint.'/'.static::$currentGroupId,
-            'name' => 'group-02'
+            'name' => 'group-02',
         ]);
     }
 
@@ -86,7 +86,7 @@ class ApiPlatformGroupCrudTest extends ApiTestCase
      */
     public function testDeleteGroup(): void
     {
-        static::createClient()->request('DELETE', '/api/groups/'.static::$currentGroupId);
+        static::createClient()->request('DELETE', $this->apiEndpoint.'/'.static::$currentGroupId);
         $this->assertResponseIsSuccessful();
     }
 }
