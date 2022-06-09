@@ -26,7 +26,7 @@ class Group
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'groups')]
     public Collection $users;
 
-    public function __construct(string $name, ...$users)
+    public function __construct(string $name=null, ...$users)
     {
         $this->name = $name;
         $this->users = new ArrayCollection($users);
