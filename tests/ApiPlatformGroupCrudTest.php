@@ -26,7 +26,7 @@ class ApiPlatformGroupCrudTest extends ApiTestCase
     {
         $response = static::createClient()->request('POST', $this->apiEndpoint, [
             'json' => [
-                'name' => 'group-01',
+                'name' => 'group-0',
             ]
         ]);
 
@@ -35,7 +35,7 @@ class ApiPlatformGroupCrudTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $this->assertJsonContains([
             '@id' => $this->apiEndpoint.'/'.static::$currentGroupId,
-            'name' => 'group-01',
+            'name' => 'group-0',
         ]);
     }
 
@@ -67,14 +67,14 @@ class ApiPlatformGroupCrudTest extends ApiTestCase
     {
         static::createClient()->request('PUT', $this->apiEndpoint.'/'.static::$currentGroupId, [
             'json' => [
-                'name' => 'group-02',
+                'name' => 'group',
             ]
         ]);
 
         $this->assertResponseIsSuccessful();
         $this->assertJsonContains([
             '@id' => $this->apiEndpoint.'/'.static::$currentGroupId,
-            'name' => 'group-02',
+            'name' => 'group',
         ]);
     }
 

@@ -100,6 +100,34 @@ class ApiPlatformUserCrudTest extends ApiTestCase
      * @throws TransportExceptionInterface
      * @throws ServerExceptionInterface
      * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     */
+    public function testAddToGroup()
+    {
+        static::createClient()->request('PUT', $this->apiEndpoint.'/'.static::$currentUserId, [
+            'json' => [
+                'groups' => [
+                    '/api/groups/1',
+                    '/api/groups/2',
+                ]
+            ]
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertJsonContains([
+            '@id' => $this->apiEndpoint.'/'.static::$currentUserId,
+            'groups' => [
+                '/api/groups/1',
+                '/api/groups/2',
+            ]
+        ]);
+    }
+
+    /**
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws RedirectionExceptionInterface
      * @throws ClientExceptionInterface
      */
     public function testDeleteUser(): void
