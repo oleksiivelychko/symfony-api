@@ -13,8 +13,8 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('api-v2/', name: 'group-api')]
 final class GroupController extends RestfulController
 {
-    #[Route('groups', name: '_fetch-groups', methods: ['GET'])]
-    public function fetchGroups(GroupRepository $groupRepository): JsonResponse
+    #[Route('groups', name: '_list-groups', methods: ['GET'])]
+    public function listGroups(GroupRepository $groupRepository): JsonResponse
     {
         /**
          * @var Group $group
@@ -26,24 +26,24 @@ final class GroupController extends RestfulController
         return $this->json($data ?? []);
     }
 
-    #[Route('groups/{id}', name: '_fetch-group', methods: ['GET'])]
-    public function fetchGroup(GroupRepository $groupRepository, int $id): JsonResponse
+    #[Route('groups/{id}', name: '_get-group', methods: ['GET'])]
+    public function getGroup(GroupRepository $groupRepository, int $id): JsonResponse
     {
         $group = $groupRepository->find($id);
         if (!$group) {
             return $this->json(['error' => self::ENTITY_NOT_FOUND], Response::HTTP_NOT_FOUND);
         }
 
-        return $this->json([$group->getData()]);
+        return $this->json($group->getData());
     }
 
-    #[Route('groups', name: '_add-group', methods: ['POST'])]
-    public function addGroup(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    #[Route('groups', name: '_create-group', methods: ['POST'])]
+    public function createGroup(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         try {
             $request = $this->transformJsonBody($request);
             if (!$request->get('name')) {
-                throw new \Exception();
+                throw new \Exception(self::EMPTY_REQUEST_DATA);
             }
 
             $group = new Group();
@@ -63,8 +63,8 @@ final class GroupController extends RestfulController
         }
     }
 
-    #[Route('groups/{id}', name: '_edit-group', methods: ['PUT'])]
-    public function editGroup(
+    #[Route('groups/{id}', name: '_update-group', methods: ['PUT'])]
+    public function updateGroup(
         Request $request,
         EntityManagerInterface $entityManager,
         GroupRepository $groupRepository,
@@ -79,9 +79,11 @@ final class GroupController extends RestfulController
 
             $request = $this->transformJsonBody($request);
             if (!$request->get('name')) {
-                throw new \Exception();
+                throw new \Exception(self::EMPTY_REQUEST_DATA);
             }
 
+            $group->setName($request->get('name'));
+            $entityManager->persist($group);
             $entityManager->flush();
 
             return $this->json([
