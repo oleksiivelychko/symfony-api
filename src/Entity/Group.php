@@ -21,12 +21,12 @@ class Group
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank(message: "The name '{{ value }}' is empty.")]
-    public string $name;
+    public ?string $name = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'groups')]
     public Collection $users;
 
-    public function __construct(string $name=null, ...$users)
+    public function __construct(?string $name=null, ...$users)
     {
         $this->name = $name;
         $this->users = new ArrayCollection($users);
