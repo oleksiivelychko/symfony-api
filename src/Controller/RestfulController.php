@@ -7,13 +7,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class RestfulController extends AbstractController
 {
-    protected const ENTITY_NOT_FOUND        = 'Entity not found';
-    protected const ENTITY_HAS_BEEN_CREATED = 'Entity has been created';
-    protected const ENTITY_HAS_BEEN_UPDATED = 'Entity has been updated';
-    protected const ENTITY_HAS_BEEN_DELETED = 'Entity has been deleted';
-    protected const UNPROCESSABLE_ENTITY    = 'Unprocessable entity';
-    protected const EMAIL_IS_NOT_VALID      = 'Email is not valid email address';
-    protected const EMAIL_ALREADY_TAKEN     = 'Email already taken';
+    public const ENTITY_NOT_FOUND        = 'Entity not found';
+    public const ENTITY_HAS_BEEN_CREATED = 'Entity has been created';
+    public const ENTITY_HAS_BEEN_UPDATED = 'Entity has been updated';
+    public const ENTITY_HAS_BEEN_DELETED = 'Entity has been deleted';
+    public const UNPROCESSABLE_ENTITY    = 'Unprocessable entity';
+    public const EMAIL_IS_NOT_VALID      = 'Email is not valid email address';
+    public const EMAIL_ALREADY_TAKEN     = 'Email already taken';
 
     protected function transformJsonBody(Request $request): Request
     {
