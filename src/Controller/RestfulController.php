@@ -14,6 +14,7 @@ class RestfulController extends AbstractController
     public const UNPROCESSABLE_ENTITY    = 'Unprocessable entity';
     public const EMAIL_IS_NOT_VALID      = 'Email is not valid email address';
     public const EMAIL_ALREADY_TAKEN     = 'Email already taken';
+    public const EMPTY_REQUEST_DATA      = 'Empty request data';
 
     protected function transformJsonBody(Request $request): Request
     {
