@@ -1,7 +1,20 @@
 api_platform:
     mapping:
         paths: ['%kernel.project_dir%/src/Entity']
-    patch_formats:
-        json: ['application/merge-patch+json']
     swagger:
         versions: [3]
+    formats:
+        json: ['application/json']
+        jsonld: ['application/ld+json']
+        jsonapi: ['application/vnd.api+json']
+        xml: ['application/xml', 'text/xml']
+        yaml: ['application/x-yaml']
+        csv: ['text/csv']
+        html: ['text/html']
+    error_formats:
+        jsonproblem: ['application/problem+json']
+        jsonld: ['application/ld+json']      # Hydra error formats
+        jsonapi: ['application/vnd.api+json']
+    patch_formats:
+        json: ['application/merge-patch+json']
+        jsonapi: ['application/vnd.api+json']
