@@ -15,8 +15,8 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('api-v2/', name: 'user-api')]
 final class UserController extends RestfulController
 {
-    #[Route('users', name: '_fetch-users', methods: ['GET'])]
-    public function fetchUsers(UserRepository $userRepository): JsonResponse
+    #[Route('users', name: '_list-users', methods: ['GET'])]
+    public function listUsers(UserRepository $userRepository): JsonResponse
     {
         $data = $userRepository->findAll();
         return $this->json($data);
@@ -33,13 +33,13 @@ final class UserController extends RestfulController
         return $this->json($user);
     }
 
-    #[Route('users', name: '_add-user', methods: ['POST'])]
-    public function addUser(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    #[Route('users', name: '_create-user', methods: ['POST'])]
+    public function createUser(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         try {
             $request = $this->transformJsonBody($request);
             if (!$request->get('name') || !$request->get('email')) {
-                throw new \Exception();
+                throw new \Exception(self::EMPTY_REQUEST_DATA);
             }
 
             if (!filter_var($request->get('email'), FILTER_VALIDATE_EMAIL)) {
@@ -69,9 +69,7 @@ final class UserController extends RestfulController
 
             $data = [
                 'message'   => self::ENTITY_HAS_BEEN_CREATED,
-                'id'        => $user->getId(),
-                'name'      => $user->getName(),
-                'email'     => $user->getEmail(),
+                'user'      => $user,
             ];
 
             return $this->json($data, Response::HTTP_CREATED);
@@ -82,8 +80,8 @@ final class UserController extends RestfulController
         }
     }
 
-    #[Route('users/{id}', name: '_edit-user', methods: ['PUT'])]
-    public function editUser(
+    #[Route('users/{id}', name: '_update-user', methods: ['PUT'])]
+    public function updateUser(
         Request $request,
         EntityManagerInterface $entityManager,
         UserRepository $userRepository,
@@ -114,8 +112,7 @@ final class UserController extends RestfulController
 
             return $this->json([
                 'message'   => self::ENTITY_HAS_BEEN_UPDATED,
-                'id'        => $user->getId(),
-                'name'      => $user->getName()
+                'user'      => $user,
             ]);
         } catch (\Exception $e) {
             return $this->json([
