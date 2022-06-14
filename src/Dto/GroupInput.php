@@ -6,9 +6,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 final class GroupInput
 {
-    #[Groups(['read', 'write'])]
+    #[Groups(['write'])]
     public string $name;
 
-    #[Groups(['read', 'write'])]
+    #[Groups(['write'])]
     public array $users;
 }

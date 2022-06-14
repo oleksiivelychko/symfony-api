@@ -9,9 +9,9 @@ final class GroupOutput
     #[Groups(['read'])]
     public int $id;
 
-    #[Groups(['read', 'write'])]
+    #[Groups(['read'])]
     public string $name;
 
-    #[Groups(['read', 'write'])]
+    #[Groups(['read'])]
     public array $users;
 }
