@@ -3,27 +3,39 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Dto\GroupInput;
+use App\Dto\GroupOutput;
 use App\Repository\GroupRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: GroupRepository::class)]
 #[ORM\Table(name: '`groups`')]
-#[ApiResource]
-class Group
+#[ApiResource(
+    denormalizationContext: ['groups' => ['write']],
+    formats: ['json', 'jsonld'],
+    input: GroupInput::class,
+    normalizationContext: ['groups' => ['read']],
+    output: GroupOutput::class,
+)]
+final class Group
 {
+    #[Groups(['read'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private int $id;
 
+    #[Groups(['read','write'])]
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank(message: "The name '{{ value }}' is empty.")]
     public ?string $name = null;
 
-    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'groups')]
+    #[Groups(['read','write'])]
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'groups', fetch: 'EXTRA_LAZY')]
     public Collection $users;
 
     public function __construct(?string $name=null, ...$users)
@@ -52,25 +64,52 @@ class Group
         return $this->name;
     }
 
-    public function jsonSerialize(): array
+    public function addUser(User $user): self
     {
-        return [
-            'name' => $this->getName()
-        ];
+        if (!$this->users->contains($user)) {
+            $user->addGroup($this); // synchronously updating inverse side
+            $this->users[] = $user;
+        }
+
+        return $this;
     }
 
-    public function getData(): array
+    public function removeUser(User $user): self
+    {
+        if ($this->users->contains($user)) {
+            $user->removeGroup($this); // synchronously updating inverse side
+            $this->users->removeElement($user);
+        }
+
+        return $this;
+    }
+
+    public function removeUsers(): self
+    {
+        if (!$this->users->isEmpty()) {
+            $this->users->clear();
+        }
+
+        return $this;
+    }
+
+    public function formatData(): array
     {
         return [
             'id'    => $this->getId(),
             'name'  => $this->getName(),
-            'users' => array_map(function (User $user) {
-                return [
-                    'id'    => $user->getId(),
-                    'name'  => $user->getName(),
-                    'email' => $user->getEmail(),
-                ];
-            }, $this->getUsers()->toArray())
+            'users' => $this->getUsersToArray()
         ];
+    }
+
+    public function getUsersToArray(): array
+    {
+        return array_map(function (User $user) {
+            return [
+                'id'    => $user->getId(),
+                'name'  => $user->getName(),
+                'email' => $user->getEmail(),
+            ];
+        }, $this->getUsers()->toArray());
     }
 }
