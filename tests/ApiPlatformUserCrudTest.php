@@ -4,6 +4,7 @@ namespace App\Tests;
 
 use App\Tests\Abstracts\ApiPlatformTestCase;
 use App\Tests\Contracts\ApiUserCrudTestInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -53,6 +54,23 @@ class ApiPlatformUserCrudTest extends ApiPlatformTestCase implements ApiUserCrud
                 ]
             ],
         ]);
+    }
+
+    /**
+     * @return void
+     * @throws TransportExceptionInterface
+     */
+    public function testCreateNonUniqueUser(): void
+    {
+        $response = static::createClient()->request('POST', $this->apiEndpoint, [
+            'headers' => $this->requestHeaders(),
+            'json' => [
+                'name'      => 'user',
+                'email'     => self::$uniqueEmail,
+            ],
+        ]);
+
+        $this->assertResponseStatusCodeSame($response->getStatusCode(), Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**
