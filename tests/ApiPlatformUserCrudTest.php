@@ -2,19 +2,19 @@
 
 namespace App\Tests;
 
-use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\ApiTestCase;
-use Symfony\Component\HttpFoundation\Response;
+use App\Tests\Abstracts\ApiPlatformTestCase;
+use App\Tests\Contracts\ApiUserCrudTestInterface;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
-class ApiPlatformUserCrudTest extends ApiTestCase
+class ApiPlatformUserCrudTest extends ApiPlatformTestCase implements ApiUserCrudTestInterface
 {
-    static int $currentUserId = 0;
-
-    private string $apiEndpoint = '/api/users';
+    protected string $apiEndpoint = '/api/users';
+    protected string $entityName = 'User';
+    private static string $uniqueEmail = '';
 
     /**
      * @throws TransportExceptionInterface
@@ -25,36 +25,34 @@ class ApiPlatformUserCrudTest extends ApiTestCase
      */
     public function testCreateUser(): void
     {
+        self::$uniqueEmail = sprintf('user-%d@email.com', time());
+
         $response = static::createClient()->request('POST', $this->apiEndpoint, [
+            'headers' => $this->requestHeaders(),
             'json' => [
-                'name' => 'user-0',
-                'email' => 'user-0@email.com',
-            ]
+                'name'      => 'user',
+                'email'     => self::$uniqueEmail,
+                'groups'    => [1, 2],
+            ],
         ]);
 
-        static::$currentUserId = json_decode($response->getContent())->id;
+        static::$currentId = json_decode($response->getContent())->id;
 
-        $this->assertResponseIsSuccessful();
-        $this->assertJsonContains([
-            '@id' => $this->apiEndpoint.'/'.static::$currentUserId,
-            'name' => 'user-0',
-            'email' => 'user-0@email.com',
+        $this->assertSuccessfulJson([
+            'id'        => static::$currentId,
+            'name'      => 'user',
+            'email'     => self::$uniqueEmail,
+            'groups'    => [
+                [
+                    'id'    => 1,
+                    'name'  => 'group-01',
+                ],
+                [
+                    'id'    => 2,
+                    'name'  => 'group-02',
+                ]
+            ],
         ]);
-    }
-
-    /**
-     * @throws TransportExceptionInterface
-     */
-    public function testCreateNonUniqueUser(): void
-    {
-        static::createClient()->request('POST', $this->apiEndpoint, [
-            'json' => [
-                'name' => 'user',
-                'email' => 'user-0@email.com',
-            ]
-        ]);
-
-        $this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**
@@ -66,11 +64,24 @@ class ApiPlatformUserCrudTest extends ApiTestCase
      */
     public function testGetUser(): void
     {
-        static::createClient()->request('GET', $this->apiEndpoint.'/'.static::$currentUserId);
+        static::createClient()->request('GET', $this->apiEndpoint.'/'.static::$currentId, [
+            'headers' => $this->requestHeaders(),
+        ]);
 
-        $this->assertResponseIsSuccessful();
-        $this->assertJsonContains([
-            '@id' => $this->apiEndpoint.'/'.static::$currentUserId,
+        $this->assertSuccessfulJson([
+            'id'        => static::$currentId,
+            'name'      => 'user',
+            'email'     => self::$uniqueEmail,
+            'groups'    => [
+                [
+                    'id'    => 1,
+                    'name'  => 'group-01',
+                ],
+                [
+                    'id'    => 2,
+                    'name'  => 'group-02',
+                ]
+            ],
         ]);
     }
 
@@ -83,44 +94,24 @@ class ApiPlatformUserCrudTest extends ApiTestCase
      */
     public function testUpdateUser(): void
     {
-        static::createClient()->request('PUT', $this->apiEndpoint.'/'.static::$currentUserId, [
-            'json' => [
-                'name' => 'user-00',
-            ]
+        static::createClient()->request('PUT', $this->apiEndpoint.'/'.static::$currentId, [
+            'headers' => $this->requestHeaders(),
+            'json'=> [
+                'name' => 'user-0',
+                'groups' => [2],
+            ],
         ]);
 
-        $this->assertResponseIsSuccessful();
-        $this->assertJsonContains([
-            '@id' => $this->apiEndpoint.'/'.static::$currentUserId,
-            'name' => 'user-00',
-        ]);
-    }
-
-    /**
-     * @throws TransportExceptionInterface
-     * @throws ServerExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws DecodingExceptionInterface
-     * @throws ClientExceptionInterface
-     */
-    public function testAddToGroup()
-    {
-        static::createClient()->request('PUT', $this->apiEndpoint.'/'.static::$currentUserId, [
-            'json' => [
-                'groups' => [
-                    '/api/groups/1',
-                    '/api/groups/2',
+        $this->assertSuccessfulJson([
+            'id'        => static::$currentId,
+            'email'     => self::$uniqueEmail,
+            'name'      => 'user-0',
+            'groups'    => [
+                [
+                    'id'    => 2,
+                    'name'  => 'group-02',
                 ]
-            ]
-        ]);
-
-        $this->assertResponseIsSuccessful();
-        $this->assertJsonContains([
-            '@id' => $this->apiEndpoint.'/'.static::$currentUserId,
-            'groups' => [
-                '/api/groups/1',
-                '/api/groups/2',
-            ]
+            ],
         ]);
     }
 
@@ -132,7 +123,7 @@ class ApiPlatformUserCrudTest extends ApiTestCase
      */
     public function testDeleteUser(): void
     {
-        static::createClient()->request('DELETE', $this->apiEndpoint.'/'.static::$currentUserId);
+        static::createClient()->request('DELETE', $this->apiEndpoint.'/'.static::$currentId);
         $this->assertResponseIsSuccessful();
     }
 }

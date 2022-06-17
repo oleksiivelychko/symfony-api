@@ -23,25 +23,27 @@ final class UserInputDataTransformer implements DataTransformerInterface
      */
     public function transform($object, string $to, array $context = []): User
     {
-        if ($object->email === null) {
-            throw new Exception('Email is required');
-        }
 
         /**
          * @var User $user
          * @var UserInput $object
          */
         $user = $context[AbstractNormalizer::OBJECT_TO_POPULATE] ?? null;
+
+        if (!$user && !isset($object->email)) {
+            throw new Exception('Email field is required');
+        }
+
         if (!$user) {
             $user = new User();
+            $user->setEmail($object->email);
         }
 
         $user->setName($object->name);
-        $user->setEmail($object->email);
 
-        if (isset($object->users) && count($object->users) > 0) {
+        if (isset($object->groups) && count($object->groups) > 0) {
             $user->removeGroups();
-            foreach ($object->users as $userId) {
+            foreach ($object->groups as $userId) {
                 $group = $this->groupRepository->find($userId);
                 if ($group) {
                     $user->addGroup($group);
