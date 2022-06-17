@@ -28,7 +28,7 @@ class ApiPlatformGroupCrudTest extends ApiPlatformTestCase implements ApiGroupCr
     {
         $response = static::createClient()->request('POST', $this->apiEndpoint, [
             'headers' => $this->requestHeaders(),
-            'json'=> [
+            'json' => [
                 'name' => 'group',
                 'users' => [1, 2],
             ],
@@ -63,7 +63,7 @@ class ApiPlatformGroupCrudTest extends ApiPlatformTestCase implements ApiGroupCr
      */
     public function testGetGroup(): void
     {
-        $response = static::createClient()->request('GET', $this->apiEndpoint.'/'.static::$currentId, [
+        static::createClient()->request('GET', $this->apiEndpoint.'/'.static::$currentId, [
             'headers' => $this->requestHeaders(),
         ]);
 
@@ -94,7 +94,7 @@ class ApiPlatformGroupCrudTest extends ApiPlatformTestCase implements ApiGroupCr
      */
     public function testUpdateGroup(): void
     {
-        $response = static::createClient()->request('PUT', $this->apiEndpoint.'/'.static::$currentId, [
+        static::createClient()->request('PUT', $this->apiEndpoint.'/'.static::$currentId, [
             'headers' => $this->requestHeaders(),
             'json'=> [
                 'name' => 'group-0',
