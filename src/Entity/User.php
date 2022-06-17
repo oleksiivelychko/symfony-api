@@ -2,11 +2,14 @@
 
 namespace App\Entity;
 
+use App\Dto\UserInput;
+use App\Dto\UserOutput;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiResource;
 
@@ -14,31 +17,41 @@ use ApiPlatform\Core\Annotation\ApiResource;
 #[ORM\Table(name: '`users`')]
 #[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: 'email', message: 'Email already taken')]
-#[ApiResource(normalizationContext: ['skip_null_values' => null])]
+#[ApiResource(
+    denormalizationContext: ['groups' => ['write']],
+    formats: ['json', 'jsonld'],
+    input: UserInput::class,
+    normalizationContext: ['groups' => ['read'], 'skip_null_values' => null],
+    output: UserOutput::class)
+]
 class User implements \JsonSerializable
 {
+    #[Groups(['read'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private int $id;
 
+    #[Groups(['read', 'write'])]
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\Length(min: 2, max: 50)]
     #[Assert\NotBlank]
-    public string $name;
+    public ?string $name;
 
+    #[Groups(['read', 'write'])]
     #[ORM\Column(type: 'string', length: 255, unique: true)]
     #[Assert\Length(min: 2, max: 50)]
     #[Assert\Email(message: "The email '{{ value }}' is not a valid email.")]
-    public string $email;
+    public ?string $email;
 
+    #[Groups(['read', 'write'])]
     #[ORM\ManyToMany(targetEntity: Group::class, inversedBy: 'users')]
     #[ORM\JoinTable(name: 'users_groups')]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(name: 'group_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    private Collection $groups;
+    public Collection $groups;
 
-    public function __construct(string $name=null, string $email=null, ...$groups)
+    public function __construct(?string $name=null, ?string $email=null, ...$groups)
     {
         $this->name = $name;
         $this->email = $email;
@@ -107,8 +120,19 @@ class User implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'name'  => $this->getName(),
-            'email' => $this->getEmail()
+            'name'      => $this->getName(),
+            'email'     => $this->getEmail(),
+            'groups'    => $this->getGroupsToArray(),
         ];
+    }
+
+    public function getGroupsToArray(): array
+    {
+        return array_map(function (Group $group) {
+            return [
+                'id'    => $group->getId(),
+                'name'  => $group->getName(),
+            ];
+        }, $this->getGroups()->toArray());
     }
 }
