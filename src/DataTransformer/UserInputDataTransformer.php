@@ -3,6 +3,7 @@
 namespace App\DataTransformer;
 
 use ApiPlatform\Core\DataTransformer\DataTransformerInterface;
+use ApiPlatform\Core\Validator\ValidatorInterface;
 use App\Dto\UserInput;
 use App\Entity\User;
 use App\Repository\GroupRepository;
@@ -11,10 +12,13 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 
 final class UserInputDataTransformer implements DataTransformerInterface
 {
+    private ValidatorInterface $validator;
+
     private GroupRepository $groupRepository;
 
-    public function __construct(GroupRepository $groupRepository)
+    public function __construct(ValidatorInterface $validator, GroupRepository $groupRepository)
     {
+        $this->validator = $validator;
         $this->groupRepository = $groupRepository;
     }
 
@@ -23,6 +27,7 @@ final class UserInputDataTransformer implements DataTransformerInterface
      */
     public function transform($object, string $to, array $context = []): User
     {
+        $this->validator->validate($object);
 
         /**
          * @var User $user
