@@ -25,3 +25,7 @@ services:
     App\EventSubscriber\FixPostgreSQLDefaultSchemaListener:
         tags:
             - { name: doctrine.event_listener, event: postGenerateSchema }
+
+    App\Dto\Http\RequestDTOResolver:
+        arguments:
+            - '@validator'
