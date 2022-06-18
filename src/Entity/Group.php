@@ -93,7 +93,7 @@ final class Group
         return $this;
     }
 
-    public function formatData(): array
+    public function toJson(): array
     {
         return [
             'id'    => $this->getId(),
