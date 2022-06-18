@@ -13,4 +13,6 @@ interface ApiUserCrudTestInterface
     public function testDeleteUser(): void;
 
     public function testCreateNonUniqueUser(): void;
+
+    public function testListUsers(): void;
 }

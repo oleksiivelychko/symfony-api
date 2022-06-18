@@ -24,6 +24,49 @@ class ApiPlatformUserCrudTest extends ApiPlatformTestCase implements ApiUserCrud
      * @throws DecodingExceptionInterface
      * @throws ClientExceptionInterface
      */
+    public function testListUsers(): void
+    {
+        static::createClient()->request('GET', $this->apiEndpoint, [
+            'headers' => $this->requestHeaders(),
+        ]);
+
+        $this->assertSuccessfulJson([
+            [
+                'id'        => 1,
+                'name'      => 'user-01',
+                'email'     => 'user-01@email.com',
+                'groups'    => [
+                    [
+                        'id'    => 1,
+                        'name'  => 'group-01',
+                    ],
+                ],
+            ],
+            [
+                'id'        => 2,
+                'name'      => 'user-02',
+                'email'     => 'user-02@email.com',
+                'groups'    => [
+                    [
+                        'id'    => 1,
+                        'name'  => 'group-01',
+                    ],
+                    [
+                        'id'    => 2,
+                        'name'  => 'group-02',
+                    ],
+                ],
+            ],
+        ]);
+    }
+
+    /**
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     */
     public function testCreateUser(): void
     {
         self::$uniqueEmail = sprintf('user-%d@email.com', time());
