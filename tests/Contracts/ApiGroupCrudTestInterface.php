@@ -11,4 +11,6 @@ interface ApiGroupCrudTestInterface
     public function testUpdateGroup(): void;
 
     public function testDeleteGroup(): void;
+
+    public function testListGroups(): void;
 }
