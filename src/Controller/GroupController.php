@@ -89,7 +89,7 @@ final class GroupController extends RestfulController
             $group->setName($request->getName());
 
             $userIds = $request->getUsers();
-            if (count($userIds) > 0) {
+            if (!empty($userIds)) {
                 $group->removeUsers();
                 foreach ($userIds as $userId) {
                     $user = $userRepository->find($userId);

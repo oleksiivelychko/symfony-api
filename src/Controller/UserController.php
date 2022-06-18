@@ -2,13 +2,13 @@
 
 namespace App\Controller;
 
+use App\Dto\Http\UserDTO;
 use App\Entity\Group;
 use App\Entity\User;
 use App\Repository\GroupRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -34,31 +34,29 @@ final class UserController extends RestfulController
     }
 
     #[Route('users', name: '_create-user', methods: ['POST'])]
-    public function createUser(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function createUser(
+        UserDTO $request,
+        EntityManagerInterface $entityManager,
+        UserRepository $userRepository,
+        GroupRepository $groupRepository,
+    ): JsonResponse
     {
         try {
-            $request = $this->transformJsonBody($request);
-            if (!$request->get('name') || !$request->get('email')) {
-                throw new \Exception(self::EMPTY_REQUEST_DATA);
-            }
-
-            if (!filter_var($request->get('email'), FILTER_VALIDATE_EMAIL)) {
-                return $this->json(['error' => self::EMAIL_IS_NOT_VALID], Response::HTTP_BAD_GATEWAY);
-            }
-
-            $existsOne = $entityManager->getRepository(User::class)->findOneByEmail($request->get('email'));
+            $existsOne = $userRepository->findOneByEmail($request->getEmail());
             if ($existsOne) {
                 return $this->json(['error' => self::EMAIL_ALREADY_TAKEN], Response::HTTP_BAD_GATEWAY);
             }
 
             $user = new User();
-            $user->setName($request->get('name'));
-            $user->setEmail($request->get('email'));
+            $user->setName($request->getName());
+            $user->setEmail($request->getEmail());
+
             $entityManager->persist($user);
 
-            if ($request->get('groups')) {
-                foreach ($request->get('groups') as $groupId) {
-                    $group = $entityManager->getRepository(Group::class)->find($groupId);
+            $groupIds = $request->getGroups();
+            if (!empty($groupIds)) {
+                foreach ($groupIds as $groupId) {
+                    $group = $groupRepository->find($groupId);
                     if ($group) {
                         $user->addGroup($group);
                     }
@@ -69,7 +67,7 @@ final class UserController extends RestfulController
 
             $data = [
                 'message'   => self::ENTITY_HAS_BEEN_CREATED,
-                'user'      => $user,
+                'data'      => $user,
             ];
 
             return $this->json($data, Response::HTTP_CREATED);
@@ -82,7 +80,7 @@ final class UserController extends RestfulController
 
     #[Route('users/{id}', name: '_update-user', methods: ['PUT'])]
     public function updateUser(
-        Request $request,
+        UserDTO $request,
         EntityManagerInterface $entityManager,
         UserRepository $userRepository,
         GroupRepository $groupRepository,
@@ -95,12 +93,12 @@ final class UserController extends RestfulController
                 return $this->json(['error' => self::ENTITY_NOT_FOUND], Response::HTTP_NOT_FOUND);
             }
 
-            $request = $this->transformJsonBody($request);
-            $user->setName($request->get('name'));
+            $user->setName($request->getName());
 
-            if ($request->get('groups')) {
+            $groupIds = $request->getGroups();
+            if (!empty($groupIds)) {
                 $user->removeGroups();
-                foreach ($request->get('groups') as $groupId) {
+                foreach ($groupIds as $groupId) {
                     $group = $groupRepository->find($groupId);
                     if ($group) {
                         $user->addGroup($group);
@@ -112,7 +110,7 @@ final class UserController extends RestfulController
 
             return $this->json([
                 'message'   => self::ENTITY_HAS_BEEN_UPDATED,
-                'user'      => $user,
+                'data'      => $user,
             ]);
         } catch (\Exception $e) {
             return $this->json([
