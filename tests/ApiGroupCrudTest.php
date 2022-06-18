@@ -2,8 +2,8 @@
 
 namespace App\Tests;
 
-use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\ApiTestCase;
 use App\Controller\RestfulController;
+use App\Tests\Abstracts\ApiPlatformTestCase;
 use App\Tests\Contracts\ApiGroupCrudTestInterface;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
@@ -11,11 +11,53 @@ use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
-class ApiGroupCrudTest extends ApiTestCase implements ApiGroupCrudTestInterface
+class ApiGroupCrudTest extends ApiPlatformTestCase implements ApiGroupCrudTestInterface
 {
-    static int $currentGroupId = 0;
+    protected string $apiEndpoint = '/api-v2/groups';
 
-    private string $apiEndpoint = '/api-v2/groups';
+    /**
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     */
+    public function testListGroups(): void
+    {
+        static::createClient()->request('GET', $this->apiEndpoint, [
+            'headers' => $this->requestHeaders(),
+        ]);
+
+        $this->assertSuccessfulJson([
+            [
+                'id'    => 1,
+                'name'  => 'group-01',
+                'users' => [
+                    [
+                        'id'    => 1,
+                        'name'  => 'user-01',
+                        'email' => 'user-01@email.com',
+                    ],
+                    [
+                        'id'    => 2,
+                        'name'  => 'user-02',
+                        'email' => 'user-02@email.com',
+                    ]
+                ],
+            ],
+            [
+                'id'    => 2,
+                'name'  => 'group-02',
+                'users' => [
+                    [
+                        'id'    => 2,
+                        'name'  => 'user-02',
+                        'email' => 'user-02@email.com',
+                    ]
+                ],
+            ],
+        ]);
+    }
 
     /**
      * @throws TransportExceptionInterface
@@ -27,18 +69,33 @@ class ApiGroupCrudTest extends ApiTestCase implements ApiGroupCrudTestInterface
     public function testCreateGroup(): void
     {
         $response = static::createClient()->request('POST', $this->apiEndpoint, [
+            'headers' => $this->requestHeaders(),
             'json' => [
-                'name' => 'group',
+                'name'  => 'group',
+                'users' => [1, 2],
             ]
         ]);
 
-        static::$currentGroupId = json_decode($response->getContent())->id;
+        static::$currentId = json_decode($response->getContent())?->data?->id;
 
-        $this->assertResponseIsSuccessful();
-        $this->assertJsonContains([
-            'id'        => static::$currentGroupId,
-            'name'      => $response->toArray()['name'] ?? null,
+        $this->assertSuccessfulJson([
             'message'   => RestfulController::ENTITY_HAS_BEEN_CREATED,
+            'data'      => [
+                'id'    => static::$currentId,
+                'name'  => 'group',
+                'users' => [
+                    [
+                        'id'    => 1,
+                        'name'  => 'user-01',
+                        'email' => 'user-01@email.com',
+                    ],
+                    [
+                        'id'    => 2,
+                        'name'  => 'user-02',
+                        'email' => 'user-02@email.com',
+                    ]
+                ],
+            ]
         ]);
     }
 
@@ -51,12 +108,23 @@ class ApiGroupCrudTest extends ApiTestCase implements ApiGroupCrudTestInterface
      */
     public function testGetGroup(): void
     {
-        static::createClient()->request('GET', $this->apiEndpoint.'/'.static::$currentGroupId);
+        static::createClient()->request('GET', $this->apiEndpoint.'/'.static::$currentId);
 
-        $this->assertResponseIsSuccessful();
-        $this->assertJsonContains([
-            'id'    => static::$currentGroupId,
+        $this->assertSuccessfulJson([
+            'id'    => static::$currentId,
             'name'  => 'group',
+            'users' => [
+                [
+                    'id'    => 1,
+                    'name'  => 'user-01',
+                    'email' => 'user-01@email.com',
+                ],
+                [
+                    'id'    => 2,
+                    'name'  => 'user-02',
+                    'email' => 'user-02@email.com',
+                ]
+            ],
         ]);
     }
 
@@ -69,16 +137,26 @@ class ApiGroupCrudTest extends ApiTestCase implements ApiGroupCrudTestInterface
      */
     public function testUpdateGroup(): void
     {
-        static::createClient()->request('PUT', $this->apiEndpoint.'/'.static::$currentGroupId, [
+        static::createClient()->request('PUT', $this->apiEndpoint.'/'.static::$currentId, [
             'json' => [
-                'name' => 'group-0',
+                'name'  => 'group-0',
+                'users' => [2]
             ]
         ]);
 
-        $this->assertResponseIsSuccessful();
-        $this->assertJsonContains([
-            'id'    => static::$currentGroupId,
-            'name' => 'group-0',
+        $this->assertSuccessfulJson([
+            'message'   => RestfulController::ENTITY_HAS_BEEN_UPDATED,
+            'data'      => [
+                'id'    => static::$currentId,
+                'name'  => 'group-0',
+                'users' => [
+                    [
+                        'id'    => 2,
+                        'name'  => 'user-02',
+                        'email' => 'user-02@email.com',
+                    ]
+                ],
+            ]
         ]);
     }
 
@@ -86,11 +164,14 @@ class ApiGroupCrudTest extends ApiTestCase implements ApiGroupCrudTestInterface
      * @throws TransportExceptionInterface
      * @throws ServerExceptionInterface
      * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
      * @throws ClientExceptionInterface
      */
     public function testDeleteGroup(): void
     {
-        static::createClient()->request('DELETE', $this->apiEndpoint.'/'.static::$currentGroupId);
-        $this->assertResponseIsSuccessful();
+        static::createClient()->request('DELETE', $this->apiEndpoint.'/'.static::$currentId);
+        $this->assertSuccessfulJson([
+            'message' => RestfulController::ENTITY_HAS_BEEN_DELETED,
+        ]);
     }
 }

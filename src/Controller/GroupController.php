@@ -2,11 +2,12 @@
 
 namespace App\Controller;
 
+use App\Dto\Http\GroupDTO;
 use App\Entity\Group;
 use App\Repository\GroupRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -20,7 +21,7 @@ final class GroupController extends RestfulController
          * @var Group $group
          */
         foreach ($groupRepository->findWithUsers() as $group) {
-            $data[] = $group->getData();
+            $data[] = $group->toJson();
         }
 
         return $this->json($data ?? []);
@@ -34,28 +35,35 @@ final class GroupController extends RestfulController
             return $this->json(['error' => self::ENTITY_NOT_FOUND], Response::HTTP_NOT_FOUND);
         }
 
-        return $this->json($group->getData());
+        return $this->json($group->toJson());
     }
 
     #[Route('groups', name: '_create-group', methods: ['POST'])]
-    public function createGroup(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function createGroup(
+        GroupDTO $request,
+        EntityManagerInterface $entityManager,
+        UserRepository $userRepository,
+    ): JsonResponse
     {
         try {
-            $request = $this->transformJsonBody($request);
-            if (!$request->get('name')) {
-                throw new \Exception(self::EMPTY_REQUEST_DATA);
+            $group = new Group();
+            $group->setName($request->getName());
+
+            foreach ($request->getUsers() as $userId) {
+                $user = $userRepository->find($userId);
+                if ($user) {
+                    $group->addUser($user);
+                }
             }
 
-            $group = new Group();
-            $group->setName($request->get('name'));
             $entityManager->persist($group);
             $entityManager->flush();
 
             return $this->json([
                 'message'   => self::ENTITY_HAS_BEEN_CREATED,
-                'id'        => $group->getId(),
-                'name'      => $group->getName()
+                'data'      => $group->toJson(),
             ], Response::HTTP_CREATED);
+
         } catch (\Exception $e) {
             return $this->json([
                 'error' => $this->unprocessableExceptionMessage($e)
@@ -65,9 +73,10 @@ final class GroupController extends RestfulController
 
     #[Route('groups/{id}', name: '_update-group', methods: ['PUT'])]
     public function updateGroup(
-        Request $request,
+        GroupDTO $request,
         EntityManagerInterface $entityManager,
         GroupRepository $groupRepository,
+        UserRepository $userRepository,
         int $id
     ): JsonResponse
     {
@@ -77,20 +86,27 @@ final class GroupController extends RestfulController
                 return $this->json(['error' => self::ENTITY_NOT_FOUND], Response::HTTP_NOT_FOUND);
             }
 
-            $request = $this->transformJsonBody($request);
-            if (!$request->get('name')) {
-                throw new \Exception(self::EMPTY_REQUEST_DATA);
+            $group->setName($request->getName());
+
+            $userIds = $request->getUsers();
+            if (count($userIds) > 0) {
+                $group->removeUsers();
+                foreach ($userIds as $userId) {
+                    $user = $userRepository->find($userId);
+                    if ($user) {
+                        $group->addUser($user);
+                    }
+                }
             }
 
-            $group->setName($request->get('name'));
             $entityManager->persist($group);
             $entityManager->flush();
 
             return $this->json([
                 'message'   => self::ENTITY_HAS_BEEN_UPDATED,
-                'id'        => $group->getId(),
-                'name'      => $group->getName()
+                'data'      => $group->toJson(),
             ]);
+
         } catch (\Exception $e) {
             return $this->json([
                 'error' => $this->unprocessableExceptionMessage($e)
