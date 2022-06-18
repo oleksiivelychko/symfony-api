@@ -7,8 +7,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 final class GroupDTO implements RequestDTOInterface
 {
-    #[Assert\NotNull]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'assert.name.not_blank')]
+    #[Assert\Length(min: 2, max: 50)]
     private string $name;
 
     #[Assert\Type('array')]

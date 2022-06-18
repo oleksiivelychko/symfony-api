@@ -31,7 +31,6 @@ final class Group
 
     #[Groups(['read','write'])]
     #[ORM\Column(type: 'string', length: 255)]
-    #[Assert\NotBlank(message: "The name '{{ value }}' is empty.")]
     public ?string $name = null;
 
     #[Groups(['read','write'])]

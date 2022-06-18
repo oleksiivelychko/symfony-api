@@ -10,7 +10,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiResource;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -34,14 +33,10 @@ class User implements \JsonSerializable
 
     #[Groups(['read', 'write'])]
     #[ORM\Column(type: 'string', length: 255)]
-    #[Assert\Length(min: 2, max: 50)]
-    #[Assert\NotBlank]
     public ?string $name;
 
     #[Groups(['read', 'write'])]
     #[ORM\Column(type: 'string', length: 255, unique: true)]
-    #[Assert\Length(min: 2, max: 50)]
-    #[Assert\Email(message: "The email '{{ value }}' is not a valid email.")]
     public ?string $email;
 
     #[Groups(['read', 'write'])]

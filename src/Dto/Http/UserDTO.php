@@ -7,8 +7,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 final class UserDTO implements RequestDTOInterface
 {
-    #[Assert\NotNull]
-    #[Assert\NotBlank]
+    #[Assert\NotNull(message: 'assert.name.is_null')]
+    #[Assert\NotBlank(message: 'assert.name.not_blank')]
+    #[Assert\Length(min: 2, max: 50)]
     private string $name;
 
     #[Assert\Email]
