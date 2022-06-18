@@ -35,10 +35,6 @@ final class UserInputDataTransformer implements DataTransformerInterface
          */
         $user = $context[AbstractNormalizer::OBJECT_TO_POPULATE] ?? null;
 
-        if (!$user && !isset($object->email)) {
-            throw new Exception('Email field is required');
-        }
-
         if (!$user) {
             $user = new User();
             $user->setEmail($object->email);
