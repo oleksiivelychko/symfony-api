@@ -3,10 +3,8 @@
 namespace App\Controller;
 
 use App\Dto\Http\GroupDTO;
-use App\Entity\Group;
 use App\Repository\GroupRepository;
-use App\Repository\UserRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Services\GroupService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,16 +13,9 @@ use Symfony\Component\Routing\Annotation\Route;
 final class GroupController extends RestfulController
 {
     #[Route('groups', name: '_list-groups', methods: ['GET'])]
-    public function listGroups(GroupRepository $groupRepository): JsonResponse
+    public function listGroups(GroupService $groupService): JsonResponse
     {
-        /**
-         * @var Group $group
-         */
-        foreach ($groupRepository->findWithUsers() as $group) {
-            $data[] = $group->jsonSerialize();
-        }
-
-        return $this->json($data ?? []);
+        return $this->json($groupService->list());
     }
 
     #[Route('groups/{id}', name: '_get-group', methods: ['GET'])]
@@ -39,68 +30,27 @@ final class GroupController extends RestfulController
     }
 
     #[Route('groups', name: '_create-group', methods: ['POST'])]
-    public function createGroup(
-        GroupDTO $request,
-        EntityManagerInterface $entityManager,
-        UserRepository $userRepository,
-    ): JsonResponse
+    public function createGroup(GroupDTO $request, GroupService $groupService): JsonResponse
     {
         try {
-            $group = new Group();
-            $group->setName($request->getName());
-
-            foreach ($request->getUsers() as $userId) {
-                $user = $userRepository->find($userId);
-                if ($user) {
-                    $group->addUser($user);
-                }
-            }
-
-            $entityManager->persist($group);
-            $entityManager->flush();
-
             return $this->json([
                 'message'   => self::ENTITY_HAS_BEEN_CREATED,
-                'data'      => $group,
+                'data'      => $groupService->create($request),
             ], Response::HTTP_CREATED);
 
         } catch (\Exception $e) {
-            return $this->json([
-                'error' => $this->unprocessableExceptionMessage($e)
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            return $this->json(['error' => $this->unprocessableExceptionMessage($e)], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
 
     #[Route('groups/{id}', name: '_update-group', methods: ['PUT'])]
-    public function updateGroup(
-        GroupDTO $request,
-        EntityManagerInterface $entityManager,
-        GroupRepository $groupRepository,
-        UserRepository $userRepository,
-        int $id
-    ): JsonResponse
+    public function updateGroup(GroupDTO $request, GroupService $groupService, int $id): JsonResponse
     {
         try {
-            $group = $groupRepository->find($id);
-            if (!$group) {
+            $group = $groupService->update($request, $id);
+            if ($group === null) {
                 return $this->json(['error' => self::ENTITY_NOT_FOUND], Response::HTTP_NOT_FOUND);
             }
-
-            $group->setName($request->getName());
-
-            $userIds = $request->getUsers();
-            if (!empty($userIds)) {
-                $group->removeUsers();
-                foreach ($userIds as $userId) {
-                    $user = $userRepository->find($userId);
-                    if ($user) {
-                        $group->addUser($user);
-                    }
-                }
-            }
-
-            $entityManager->persist($group);
-            $entityManager->flush();
 
             return $this->json([
                 'message'   => self::ENTITY_HAS_BEEN_UPDATED,
@@ -108,26 +58,17 @@ final class GroupController extends RestfulController
             ]);
 
         } catch (\Exception $e) {
-            return $this->json([
-                'error' => $this->unprocessableExceptionMessage($e)
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            return $this->json(['error' => $this->unprocessableExceptionMessage($e)], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
 
     #[Route('groups/{id}', name: '_delete-group', methods: ['DELETE'])]
-    public function deleteGroup(
-        EntityManagerInterface $entityManager,
-        GroupRepository $groupRepository,
-        int $id)
-    : JsonResponse
+    public function deleteGroup(GroupService $groupService, int $id): JsonResponse
     {
-        $group = $groupRepository->find($id);
-        if (!$group) {
+        $group = $groupService->delete($id);
+        if ($group === null) {
             return $this->json(['error' => self::ENTITY_NOT_FOUND], Response::HTTP_NOT_FOUND);
         }
-
-        $entityManager->remove($group);
-        $entityManager->flush();
 
         return $this->json(['message' => self::ENTITY_HAS_BEEN_DELETED]);
     }
