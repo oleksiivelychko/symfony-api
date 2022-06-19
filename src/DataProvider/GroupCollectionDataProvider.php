@@ -26,7 +26,7 @@ final class GroupCollectionDataProvider implements
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
         foreach ($this->groupRepository->findAll() as $Group) {
-            $output[] = $Group->toJson();
+            $output[] = $Group->jsonSerialize();
         }
 
         return $output ?? [];

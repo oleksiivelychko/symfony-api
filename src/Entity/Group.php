@@ -10,7 +10,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: GroupRepository::class)]
 #[ORM\Table(name: '`groups`')]
@@ -21,7 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     normalizationContext: ['groups' => ['read']],
     output: GroupOutput::class,
 )]
-final class Group
+class Group implements \JsonSerializable
 {
     #[Groups(['read'])]
     #[ORM\Id]
@@ -92,7 +91,7 @@ final class Group
         return $this;
     }
 
-    public function toJson(): array
+    public function jsonSerialize(): array
     {
         return [
             'id'    => $this->getId(),

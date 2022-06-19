@@ -21,7 +21,7 @@ final class GroupController extends RestfulController
          * @var Group $group
          */
         foreach ($groupRepository->findWithUsers() as $group) {
-            $data[] = $group->toJson();
+            $data[] = $group->jsonSerialize();
         }
 
         return $this->json($data ?? []);
@@ -35,7 +35,7 @@ final class GroupController extends RestfulController
             return $this->json(['error' => self::ENTITY_NOT_FOUND], Response::HTTP_NOT_FOUND);
         }
 
-        return $this->json($group->toJson());
+        return $this->json($group);
     }
 
     #[Route('groups', name: '_create-group', methods: ['POST'])]
@@ -61,7 +61,7 @@ final class GroupController extends RestfulController
 
             return $this->json([
                 'message'   => self::ENTITY_HAS_BEEN_CREATED,
-                'data'      => $group->toJson(),
+                'data'      => $group,
             ], Response::HTTP_CREATED);
 
         } catch (\Exception $e) {
@@ -104,7 +104,7 @@ final class GroupController extends RestfulController
 
             return $this->json([
                 'message'   => self::ENTITY_HAS_BEEN_UPDATED,
-                'data'      => $group->toJson(),
+                'data'      => $group,
             ]);
 
         } catch (\Exception $e) {
