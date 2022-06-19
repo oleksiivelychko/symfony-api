@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Dto\Http\GroupDTO;
-use App\Repository\GroupRepository;
 use App\Services\GroupService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,10 +18,10 @@ final class GroupController extends RestfulController
     }
 
     #[Route('groups/{id}', name: '_get-group', methods: ['GET'])]
-    public function getGroup(GroupRepository $groupRepository, int $id): JsonResponse
+    public function getGroup(GroupService $groupService, int $id): JsonResponse
     {
-        $group = $groupRepository->find($id);
-        if (!$group) {
+        $group = $groupService->get($id);
+        if ($group === null) {
             return $this->json(['error' => self::ENTITY_NOT_FOUND], Response::HTTP_NOT_FOUND);
         }
 
@@ -35,7 +34,7 @@ final class GroupController extends RestfulController
         try {
             return $this->json([
                 'message'   => self::ENTITY_HAS_BEEN_CREATED,
-                'data'      => $groupService->create($request),
+                'data'      => $groupService->create($request->asObject()),
             ], Response::HTTP_CREATED);
 
         } catch (\Exception $e) {
@@ -47,7 +46,7 @@ final class GroupController extends RestfulController
     public function updateGroup(GroupDTO $request, GroupService $groupService, int $id): JsonResponse
     {
         try {
-            $group = $groupService->update($request, $id);
+            $group = $groupService->update($request->asObject(), $id);
             if ($group === null) {
                 return $this->json(['error' => self::ENTITY_NOT_FOUND], Response::HTTP_NOT_FOUND);
             }

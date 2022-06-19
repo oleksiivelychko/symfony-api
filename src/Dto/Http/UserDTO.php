@@ -30,18 +30,13 @@ final class UserDTO implements RequestDTOInterface
         $this->groups = $content['groups'] ?? [];
     }
 
-    public function getName(): string
+    public function asObject(): object
     {
-        return $this->name;
-    }
+        $object = new \stdClass();
+        $object->name = $this->name;
+        $object->email = $this->email;
+        $object->groups = $this->groups;
 
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
-    public function getGroups(): array
-    {
-        return $this->groups;
+        return $object;
     }
 }

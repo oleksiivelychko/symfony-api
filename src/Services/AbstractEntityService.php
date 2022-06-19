@@ -2,24 +2,36 @@
 
 namespace App\Services;
 
+use App\Dto\Http\RequestDTOInterface;
+use App\Entity\EntityInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 abstract class AbstractEntityService
 {
-    private EntityManagerInterface $entityManager;
+    protected EntityManagerInterface $entityManager;
 
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
     }
 
-    public function persistAndFlush($entity): void
+    abstract function list(): array;
+
+    abstract function get(int $id): ?EntityInterface;
+
+    abstract function create(object $dto): ?EntityInterface;
+
+    abstract function update(object $dto, int $id): ?EntityInterface;
+
+    abstract function delete(int $id): ?EntityInterface;
+
+    final function persistAndFlush($entity): void
     {
         $this->entityManager->persist($entity);
         $this->entityManager->flush();
     }
 
-    public function removeAndFlush($entity): void
+    final function removeAndFlush($entity): void
     {
         $this->entityManager->persist($entity);
         $this->entityManager->flush();

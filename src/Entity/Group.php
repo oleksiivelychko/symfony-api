@@ -20,7 +20,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
     normalizationContext: ['groups' => ['read']],
     output: GroupOutput::class,
 )]
-class Group implements \JsonSerializable
+class Group implements \JsonSerializable, EntityInterface
 {
     #[Groups(['read'])]
     #[ORM\Id]

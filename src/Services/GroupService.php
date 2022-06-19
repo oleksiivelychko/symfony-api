@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Dto\Http\GroupDTO;
 use App\Entity\Group;
 use App\Repository\GroupRepository;
 use App\Repository\UserRepository;
@@ -25,7 +24,7 @@ final class GroupService extends AbstractEntityService
         $this->userRepository = $userRepository;
     }
 
-    public function list(): Group|array
+    public function list(): array
     {
         /**
          * @var Group $group
@@ -37,12 +36,17 @@ final class GroupService extends AbstractEntityService
         return $data ?? [];
     }
 
-    public function create(GroupDTO $request): Group
+    public function get(int $id): ?Group
+    {
+        return $this->groupRepository->find($id);
+    }
+
+    public function create(object $dto): Group
     {
         $group = new Group();
-        $group->setName($request->getName());
+        $group->setName($dto->name);
 
-        foreach ($request->getUsers() as $userId) {
+        foreach ($dto->users as $userId) {
             $user = $this->userRepository->find($userId);
             if ($user) {
                 $group->addUser($user);
@@ -54,19 +58,18 @@ final class GroupService extends AbstractEntityService
         return $group;
     }
 
-    public function update(GroupDTO $request, int $id): ?Group
+    public function update(object $dto, int $id): ?Group
     {
         $group = $this->groupRepository->find($id);
         if (!$group) {
             return null;
         }
 
-        $group->setName($request->getName());
+        $group->setName($dto->name);
 
-        $userIds = $request->getUsers();
-        if (!empty($userIds)) {
+        if (!empty($dto->users)) {
             $group->removeUsers();
-            foreach ($userIds as $userId) {
+            foreach ($dto->users as $userId) {
                 $user = $this->userRepository->find($userId);
                 if ($user) {
                     $group->addUser($user);

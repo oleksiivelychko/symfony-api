@@ -23,7 +23,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
     normalizationContext: ['groups' => ['read'], 'skip_null_values' => null],
     output: UserOutput::class)
 ]
-class User implements \JsonSerializable
+class User implements \JsonSerializable, EntityInterface
 {
     #[Groups(['read'])]
     #[ORM\Id]
