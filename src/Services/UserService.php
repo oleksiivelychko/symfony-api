@@ -50,8 +50,6 @@ final class UserService extends AbstractEntityService
         $user->setName($dto->name);
         $user->setEmail($dto->email);
 
-        $this->entityManager->persist($user);
-
         if (!empty($dto->groups)) {
             foreach ($dto->groups as $groupId) {
                 $group = $this->groupRepository->find($groupId);
@@ -61,7 +59,8 @@ final class UserService extends AbstractEntityService
             }
         }
 
-        $this->entityManager->flush();
+        $this->persistAndFlush($user);
+
         return $user;
     }
 

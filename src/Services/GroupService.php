@@ -77,7 +77,7 @@ final class GroupService extends AbstractEntityService
             }
         }
 
-        $this->persistAndFlush($group);
+        $this->entityManager->flush();
 
         return $group;
     }
