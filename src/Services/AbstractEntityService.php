@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Dto\Http\RequestDTOInterface;
 use App\Entity\EntityInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
