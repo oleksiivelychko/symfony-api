@@ -42,9 +42,14 @@ class Group implements \JsonSerializable, EntityInterface
         $this->users = new ArrayCollection($users);
     }
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
+    }
+
+    public function setId(int $id): void
+    {
+        $this->id = $id;
     }
 
     public function getUsers(): Collection

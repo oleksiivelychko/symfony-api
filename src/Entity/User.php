@@ -58,9 +58,14 @@ class User implements \JsonSerializable, EntityInterface
         return trim($this->getName().' '.$this->getEmail());
     }
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
+    }
+
+    public function setId(int $id): void
+    {
+        $this->id = $id;
     }
 
     public function setName(string $name): void
