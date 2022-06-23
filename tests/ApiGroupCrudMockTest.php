@@ -4,11 +4,26 @@ namespace App\Tests;
 
 use App\Entity\Group;
 use App\Entity\User;
+use App\Services\GroupService;
 use App\Tests\Abstracts\ApiMockTestCase;
 use App\Tests\Contracts\ApiGroupCrudTestInterface;
+use PHPUnit\Framework\MockObject\MockClass;
 
 class ApiGroupCrudMockTest extends ApiMockTestCase implements ApiGroupCrudTestInterface
 {
+    private GroupService|MockClass $groupService;
+
+    public function __construct(?string $name = null, array $data = [], $dataName = '')
+    {
+        parent::__construct($name, $data, $dataName);
+
+        $this->groupService = new GroupService(
+            $this->entityManager,
+            $this->groupRepository,
+            $this->userRepository
+        );
+    }
+
     public function testListGroups(): void
     {
         $mockGroup1 = $this->createMock(Group::class);
