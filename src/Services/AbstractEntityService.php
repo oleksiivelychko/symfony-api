@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 abstract class AbstractEntityService
 {
-    protected EntityManagerInterface $entityManager;
+    private EntityManagerInterface $entityManager;
 
     public function __construct(EntityManagerInterface $entityManager)
     {
@@ -24,15 +24,26 @@ abstract class AbstractEntityService
 
     abstract function delete(int $id): ?EntityInterface;
 
-    final function persistAndFlush($entity): void
+    final public function getEntityManager(): EntityManagerInterface
     {
-        $this->entityManager->persist($entity);
-        $this->entityManager->flush();
+        return $this->entityManager;
     }
 
-    final function removeAndFlush($entity): void
+    final public function persist($entity, bool $flush = false): void
     {
-        $this->entityManager->persist($entity);
-        $this->entityManager->flush();
+        $this->getEntityManager()->persist($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    final public function remove($entity, bool $flush = false): void
+    {
+        $this->getEntityManager()->remove($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
     }
 }
