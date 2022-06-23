@@ -28,7 +28,6 @@ class GroupRepository extends ServiceEntityRepository
             ->leftJoin('g.users', 'u')
             ->orderBy('g.id', 'ASC')
             ->getQuery()
-            ->getResult()
-            ;
+            ->getResult();
     }
 }

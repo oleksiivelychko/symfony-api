@@ -21,35 +21,6 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
-    public function add(User $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->persist($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
-    public function remove(User $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
-    public function findByName($value): array
-    {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.name = :name')
-            ->setParameter('name', $value)
-            ->orderBy('u.id', 'ASC')
-            ->getQuery()
-            ->getResult()
-            ;
-    }
-
     /**
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
@@ -59,7 +30,6 @@ class UserRepository extends ServiceEntityRepository
             ->andWhere('u.email = :email')
             ->setParameter('email', $value)
             ->getQuery()
-            ->getOneOrNullResult()
-            ;
+            ->getOneOrNullResult();
     }
 }
