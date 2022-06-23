@@ -120,6 +120,7 @@ class User implements \JsonSerializable, EntityInterface
     public function jsonSerialize(): array
     {
         return [
+            'id'        => $this->getId(),
             'name'      => $this->getName(),
             'email'     => $this->getEmail(),
             'groups'    => $this->getGroupsToArray(),

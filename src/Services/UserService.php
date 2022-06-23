@@ -93,6 +93,7 @@ final class UserService extends AbstractEntityService
         }
 
         $this->remove($user, true);
+
         return $user;
     }
 }
