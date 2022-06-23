@@ -16,8 +16,7 @@ final class GroupService extends AbstractEntityService
         EntityManagerInterface $entityManager,
         GroupRepository $groupRepository,
         UserRepository $userRepository
-    )
-    {
+    ) {
         parent::__construct($entityManager);
 
         $this->groupRepository = $groupRepository;
@@ -53,7 +52,7 @@ final class GroupService extends AbstractEntityService
             }
         }
 
-        $this->persistAndFlush($group);
+        $this->persist($group, true);
 
         return $group;
     }
@@ -77,7 +76,7 @@ final class GroupService extends AbstractEntityService
             }
         }
 
-        $this->entityManager->flush();
+        $this->getEntityManager()->flush();
 
         return $group;
     }
@@ -89,7 +88,7 @@ final class GroupService extends AbstractEntityService
             return null;
         }
 
-        $this->removeAndFlush($group);
+        $this->remove($group, true);
 
         return $group;
     }

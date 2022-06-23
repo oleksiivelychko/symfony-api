@@ -2,8 +2,6 @@
 
 namespace App\Services;
 
-use App\Dto\Http\RequestDTOInterface;
-use App\Entity\Group;
 use App\Entity\User;
 use App\Repository\GroupRepository;
 use App\Repository\UserRepository;
@@ -18,8 +16,7 @@ final class UserService extends AbstractEntityService
         EntityManagerInterface $entityManager,
         GroupRepository $groupRepository,
         UserRepository $userRepository
-    )
-    {
+    ) {
         parent::__construct($entityManager);
 
         $this->groupRepository = $groupRepository;
@@ -59,7 +56,7 @@ final class UserService extends AbstractEntityService
             }
         }
 
-        $this->persistAndFlush($user);
+        $this->persist($user, true);
 
         return $user;
     }
@@ -83,7 +80,8 @@ final class UserService extends AbstractEntityService
             }
         }
 
-        $this->entityManager->flush();
+        $this->getEntityManager()->flush();
+
         return $user;
     }
 
@@ -94,7 +92,7 @@ final class UserService extends AbstractEntityService
             return null;
         }
 
-        $this->removeAndFlush($user);
+        $this->remove($user, true);
         return $user;
     }
 }
