@@ -39,7 +39,7 @@ doctrine-init-test-db:
 	$(dockerexecphp) --env=test doctrine:database:create
 	$(dockerexecphp) --env=test doctrine:schema:create
 
-doctrine-load-fixtures:
+doctrine-load-test-fixtures:
 	$(dockerexecphp) --env=test doctrine:fixtures:load --no-interaction
 
 # make doctrine-migration-exec migration=Version20220522093420 op=[up|down]
