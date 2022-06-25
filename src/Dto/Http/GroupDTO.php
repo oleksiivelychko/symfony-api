@@ -13,7 +13,7 @@ final class GroupDTO implements RequestDTOInterface
 
     #[Assert\Type('array')]
     #[Assert\All(
-       new Assert\Type(['type' => 'int']),
+       new Assert\Type(['type' => 'digit']),
     )]
     private array $users;
 
