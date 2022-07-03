@@ -12,6 +12,8 @@ RUN apt-get update && apt-get install -y \
     libmcrypt-dev \
     libpq-dev \
     librabbitmq-dev \
+    libzip-dev \
+    unzip \
     git \
     symfony-cli
 
@@ -19,7 +21,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN docker-php-ext-install \
     pdo \
     pdo_pgsql \
-    mbstring
+    mbstring \
+    zip
 
 RUN docker-php-source extract && \
     mkdir /usr/src/php/ext/amqp && \
