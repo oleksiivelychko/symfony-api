@@ -13,16 +13,16 @@ docker-bash:
 	docker run --rm -it symfony_api /bin/bash
 
 docker-build:
-	docker build --no-cache . -t symfony-api/dev
+	docker build --no-cache . -t local/symfony-api
 
 docker-delete-image:
-	docker image rm symfony-api/dev
+	docker image rm local/symfony-api
 
 docker-create-network:
 	docker network create -d bridge symfony-bridge
 
 docker-run:
-	docker run -it -p 8000:8000 --name symfony_api -v `pwd`:/app --network=symfony-bridge symfony-api/dev
+	docker run -it -p 8000:8000 --name symfony_api -v `pwd`:/app --network=symfony-bridge local/symfony-api
 
 docker-force-stop:
 	docker stop symfony_api

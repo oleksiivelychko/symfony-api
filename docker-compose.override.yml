@@ -4,7 +4,7 @@ services:
 
   symfony-api:
     container_name: symfony_api
-    image: symfony-api/dev
+    image: local/symfony-api
     build:
       context: .
     volumes:
