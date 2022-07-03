@@ -16,6 +16,13 @@ services:
     networks:
       - symfony-bridge-external
 
+  symfony-mq:
+    container_name: symfony_mq
+    image: rabbitmq:3.7-management
+    ports: [ "5672", "15672" ]
+    networks:
+      - symfony-bridge-external
+
 volumes:
   symfony-api-data:
 

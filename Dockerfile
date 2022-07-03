@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libmcrypt-dev \
     libpq-dev \
+    librabbitmq-dev \
     git \
     symfony-cli
 
@@ -20,7 +21,13 @@ RUN docker-php-ext-install \
     pdo_pgsql \
     mbstring
 
-RUN pecl install xdebug-3.1.4
+RUN docker-php-source extract && \
+    mkdir /usr/src/php/ext/amqp && \
+    curl -L https://github.com/php-amqp/php-amqp/archive/master.tar.gz | tar -xzC /usr/src/php/ext/amqp --strip-components=1 && \
+    docker-php-ext-install amqp && \
+    docker-php-source delete
+
+RUN pecl install xdebug-3.1.5
 RUN docker-php-ext-enable xdebug
 
 WORKDIR /app
