@@ -8,6 +8,11 @@ The first version of API based on <a href="https://api-platform.com/">API Platfo
 and available at http://127.0.0.1:8000/api as default endpoint.
 ![API Platform](public/screens/api-platform.png)
 
+💡 Get access to RabbitMQ web management interface (guest:guest):
+```
+symfony open:local:rabbitmq
+```
+
 💡 Before docker build remove `@php bin/console doctrine:migrations:migrate --no-interaction` from _composer.json_
 
 💡 Install PostgreSQL client:
