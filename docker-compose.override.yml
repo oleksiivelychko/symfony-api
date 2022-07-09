@@ -14,3 +14,23 @@ services:
       - "8000:8000"
     networks:
       - symfony-bridge-external
+
+  symfony-worker:
+    container_name: symfony_worker
+    image: local/symfony-api
+    depends_on:
+      - symfony-mq
+    pull_policy: never
+    volumes:
+      - .:/app
+    restart: unless-stopped
+    # The worker will automatically exit once it has processed 10 messages,
+    # exceeded 128M of memory, been running for 3600s or received a stop signal
+    # via the messenger:stop-workers command.
+    command: >
+      sh -c "
+        php bin/console messenger:stop-workers
+        php bin/console messenger:consume async -vv --limit=10 --memory-limit=128M --time-limit=3600 --queues=messages
+      "
+    networks:
+      - symfony-bridge-external
