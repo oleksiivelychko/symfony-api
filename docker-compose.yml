@@ -19,7 +19,15 @@ services:
   symfony-mq:
     container_name: symfony_mq
     image: rabbitmq:3.9-management
-    ports: [ "5672", "15672" ]
+    ports:
+      - "5672"
+      - "15672:15672"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:15672" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
     networks:
       - symfony-bridge-external
 
