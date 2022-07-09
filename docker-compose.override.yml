@@ -30,7 +30,7 @@ services:
     command: >
       sh -c "
         php bin/console messenger:stop-workers
-        php bin/console messenger:consume async -vv --limit=10 --memory-limit=128M --time-limit=3600 --queues=messages
+        php bin/console messenger:consume async-queue -vv --limit=10 --memory-limit=128M --time-limit=3600
       "
     networks:
       - symfony-bridge-external
