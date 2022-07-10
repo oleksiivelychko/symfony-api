@@ -12,6 +12,8 @@ services:
     restart: unless-stopped
     ports:
       - "8000:8000"
+    depends_on:
+      - symfony-db
     networks:
       - symfony-bridge-external
 
@@ -24,6 +26,8 @@ services:
     volumes:
       - .:/app
     restart: unless-stopped
+    environment:
+      - APP_ENV=worker
     # The worker will automatically exit once it has processed 10 messages,
     # exceeded 128M of memory, been running for 3600s or received a stop signal
     # via the messenger:stop-workers command.
