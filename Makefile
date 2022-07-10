@@ -10,7 +10,7 @@ docker-clear-cache:
 	$(dockerexecphp) cache:clear
 
 docker-bash:
-	docker run --rm -it symfony_api /bin/bash
+	docker run --rm -it local/symfony-api /bin/bash
 
 docker-build:
 	docker build --no-cache . -t local/symfony-api
@@ -57,6 +57,9 @@ heroku-set-app-secret:
 
 git-push:
 	git push heroku main
+
+symfony-list-messages:
+	$(phpexec) debug:messenger
 
 symfony-list-routes:
 	$(phpexec) debug:router
