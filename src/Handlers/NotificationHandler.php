@@ -16,6 +16,7 @@ final class NotificationHandler implements MessageHandlerInterface
     public function __invoke(Notification $message)
     {
         $this->logger->info('Notification handler consumed the message.');
+        // ... do some prolonged work.
     }
 
     public function __construct(private readonly LoggerInterface $logger) {}
