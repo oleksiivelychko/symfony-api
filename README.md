@@ -1,6 +1,6 @@
 # symfony-api
 
-### Sample API variations based on enterprise-level framework.
+### Sample API variations based on enterprise-level framework with optional queue worker.
 
 ⚙️ Deployed on <a href="https://oleksiivelychkosymfonyapi.herokuapp.com">Heroku</a>
 ![API Platform](public/screens/api-platform.png)
