@@ -13,6 +13,7 @@ final class BrokerMessageService
         try {
             $username = $_ENV['RABBITMQ_USERNAME'];
             $password = $_ENV['RABBITMQ_PASSWORD'];
+            $vhost = $_ENV['RABBITMQ_VHOST'];
             $host = $_ENV['RABBITMQ_HOST'];
             $port = $_ENV['RABBITMQ_PORT'];
 
@@ -21,7 +22,7 @@ final class BrokerMessageService
             $amqpConnection->setPassword($password);
             $amqpConnection->setHost($host);
             $amqpConnection->setPort($port);
-            $amqpConnection->setVhost('/');
+            $amqpConnection->setVhost($vhost);
             $amqpConnection->connect();
         } catch (\Exception $exception) {
             $this->logger->error($exception->getMessage());
