@@ -19,6 +19,7 @@ Also, available as [http://localhost:15672](http://localhost:15672)
 📎 Send test message into queue:
 ```
 curl -v http://0.0.0.0:8000/queue/test
+curl -v https://oleksiivelychkosymfonyapi.herokuapp.com/queue/test
 ```
 
 💡 Before `docker build` remove `@php bin/console doctrine:migrations:migrate --no-interaction` from _composer.json_
