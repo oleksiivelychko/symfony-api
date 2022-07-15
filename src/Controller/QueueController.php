@@ -13,10 +13,10 @@ use Symfony\Component\Routing\Annotation\Route;
 final class QueueController extends AbstractController implements BrokerMessageContract
 {
     #[Route('/test', name: '_send', methods: ['GET'])]
-    public function testMessage(MessageBusInterface $bus): Response
+    public function testMessage(MessageBusInterface $messageBus): Response
     {
         $message = new Notification('Hello, World!');
-        $bus->dispatch($message);
+        $messageBus->dispatch($message);
 
         return new Response(sprintf("Test message [%s] was sent", $message->getContent()));
     }
