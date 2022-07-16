@@ -8,7 +8,7 @@ final class BrokerMessageService
 {
     public function __construct(private readonly LoggerInterface $logger) {}
 
-    public function getRabbitMQStatus(): bool
+    public function isOkRabbitMQStatus(): bool
     {
         try {
             $username = $_ENV['RABBITMQ_USERNAME'];
@@ -24,7 +24,7 @@ final class BrokerMessageService
             $amqpConnection->setPort($port);
             $amqpConnection->setVhost($vhost);
             $amqpConnection->connect();
-        } catch (\Exception $exception) {
+        } catch (\AMQPConnectionException $exception) {
             $this->logger->error($exception->getMessage());
             return false;
         }

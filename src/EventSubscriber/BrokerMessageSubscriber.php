@@ -29,8 +29,8 @@ class BrokerMessageSubscriber implements EventSubscriberInterface
         }
 
         if ($controller instanceof BrokerMessageContract) {
-            $rabbitMqStatus = $this->brokerMessageService->getRabbitMQStatus();
-            if ($rabbitMqStatus === false) {
+            $isOkRabbitMqStatus = $this->brokerMessageService->isOkRabbitMQStatus();
+            if ($isOkRabbitMqStatus === false) {
                 throw new RabbitMQFailedException();
             }
         }
