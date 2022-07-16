@@ -7,7 +7,22 @@ framework:
             # https://symfony.com/doc/current/messenger.html#transport-configuration
             async-queue:
                 dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
-            # failed: 'doctrine://default?queue_name=failed'
+
+                # default configuration
+                retry_strategy:
+                    max_retries: 3
+                    # milliseconds delay
+                    delay: 1000
+                    # causes the delay to be higher before each retry
+                    # e.g. 1 second delay, 2 seconds, 4 seconds
+                    multiplier: 2
+                    max_delay: 0
+                    # override all of this with a service that
+                    # implements Symfony\Component\Messenger\Retry\RetryStrategyInterface
+                    # service: null
+
+            # if handling a message fails 3 max_retries times, it will then be sent to the failed transport.
+            failed: 'doctrine://default?queue_name=failed'
             # sync: 'sync://'
 
         routing:

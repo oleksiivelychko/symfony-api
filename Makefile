@@ -74,5 +74,20 @@ symfony-make-migrations:
 	$(dockerexecphp) make:migration
 	docker cp symfony_api:/app/migrations/. migrations
 
+# see all messages in the failure transport (verbose).
+# use [N] [M] as number range of messages as optional argument.
+symfony-queue-failed:
+	$(phpexec) messenger:failed:show -vv
+
+# remove a message without retrying it.
+# use [N] [M] as number range of messages as optional argument.
+symfony-queue-remove:
+	$(phpexec) messenger:failed:remove --show-messages
+
+# view and retry messages one-by-one (verbose), use --force to retry only.
+# use [N] [M] as number range of messages as optional argument.
+symfony-queue-retry:
+	$(phpexec) messenger:failed:retry -vv
+
 psql-connect:
 	psql -h 127.0.0.1 -p 5432 -U symfony -d symfony-api
