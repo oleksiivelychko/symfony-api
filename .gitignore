@@ -6,3 +6,6 @@
 .idea
 .env
 .phpunit.result.cache
+###> lexik/jwt-authentication-bundle ###
+/config/jwt/*.pem
+###< lexik/jwt-authentication-bundle ###
