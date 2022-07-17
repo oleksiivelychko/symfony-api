@@ -58,6 +58,9 @@ heroku-set-app-secret:
 git-push:
 	git push heroku main
 
+symfony-generate-jwt:
+	$(dockerexecphp) lexik:jwt:generate-keypair
+
 symfony-list-messages:
 	$(phpexec) debug:messenger
 
