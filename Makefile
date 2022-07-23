@@ -31,7 +31,7 @@ docker-force-stop:
 docker-compose-up:
 	docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
 
-# make doctrine-make-migration table=name
+# make doctrine-make-migration table=db_table_name
 doctrine-make-migration:
 	$(dockerexecphp) doctrine:migration:diff --filter-expression=/${table}/
 
