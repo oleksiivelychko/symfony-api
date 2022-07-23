@@ -9,6 +9,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Annotation\ApiResource;
 
@@ -23,7 +25,11 @@ use ApiPlatform\Core\Annotation\ApiResource;
     normalizationContext: ['groups' => ['read'], 'skip_null_values' => null],
     output: UserOutput::class)
 ]
-class User implements \JsonSerializable, EntityInterface
+class User implements
+    \JsonSerializable,
+    EntityInterface,
+    UserInterface,
+    PasswordAuthenticatedUserInterface
 {
     #[Groups(['read'])]
     #[ORM\Id]
@@ -38,6 +44,17 @@ class User implements \JsonSerializable, EntityInterface
     #[Groups(['read', 'write'])]
     #[ORM\Column(type: 'string', length: 255, unique: true)]
     public ?string $email;
+
+    #[Groups(['read', 'write'])]
+    #[ORM\Column(type: 'json')]
+    private $roles = [];
+
+    /**
+     * @var string The hashed password
+     */
+    #[Groups(['read'])]
+    #[ORM\Column(type: 'string')]
+    private $password;
 
     #[Groups(['read', 'write'])]
     #[ORM\ManyToMany(targetEntity: Group::class, inversedBy: 'users')]
@@ -56,6 +73,16 @@ class User implements \JsonSerializable, EntityInterface
     public function __toString(): string
     {
         return trim($this->getName().' '.$this->getEmail());
+    }
+
+    /**
+     * The public representation of the user (e.g. a username, an email address, etc.)
+     *
+     * @see UserInterface
+     */
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
     }
 
     public function getId(): int
@@ -115,6 +142,59 @@ class User implements \JsonSerializable, EntityInterface
     {
         $this->groups->clear();
         return $this;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+        return $this;
+    }
+
+    /**
+     * @see PasswordAuthenticatedUserInterface
+     */
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): self
+    {
+        $this->password = $password;
+        return $this;
+    }
+
+    /**
+     * Returning a salt is only needed, if you are not using a modern
+     * hashing algorithm (e.g. bcrypt or sodium) in your security.yaml.
+     *
+     * @deprecated
+     * @see UserInterface
+     */
+    public function getSalt(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials()
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
     }
 
     public function jsonSerialize(): array
