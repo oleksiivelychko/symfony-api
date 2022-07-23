@@ -67,6 +67,9 @@ symfony-list-messages:
 symfony-list-routes:
 	$(phpexec) debug:router
 
+symfony-make-password:
+	$(phpexec) security:hash-password
+
 symfony-make-entity:
 	$(phpexec) make:entity
 

@@ -8,6 +8,7 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -26,7 +27,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
     output: UserOutput::class)
 ]
 class User implements
-    \JsonSerializable,
+    JsonSerializable,
     EntityInterface,
     UserInterface,
     PasswordAuthenticatedUserInterface
@@ -164,6 +165,7 @@ class User implements
 
     /**
      * @see PasswordAuthenticatedUserInterface
+     * @return string the hashed password for this user
      */
     public function getPassword(): string
     {
