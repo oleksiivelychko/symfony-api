@@ -12,6 +12,6 @@ class ContainsRoles extends Constraint
 
     public function validatedBy(): string
     {
-        return 'assert.contains_roles';
+        return static::class.'Validator';
     }
 }
