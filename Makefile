@@ -36,6 +36,7 @@ doctrine-make-migration:
 	$(dockerexecphp) doctrine:migration:diff --filter-expression=/${table}/
 
 doctrine-init-test-db:
+	$(dockerexec) rm -f /app/var/data.db
 	$(dockerexecphp) --env=test doctrine:database:create
 	$(dockerexecphp) --env=test doctrine:schema:create
 
