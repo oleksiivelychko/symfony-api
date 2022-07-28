@@ -41,7 +41,7 @@ class ApiFixtures extends Fixture
         $user->setPassword(
             $this->userPasswordHasher->hashPassword($user, 'secret')
         );
-        $user->setRoles('USER');
+        $user->setRoles('GUEST','USER');
         $user->addGroups($group01, $group02);
         $manager->persist($user);
 
